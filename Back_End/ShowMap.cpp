@@ -124,7 +124,7 @@ void showMap(const DecibelThreshold& thres) {
 int main() {
     SetConsoleOutputCP(CP_UTF8);
     // 阈值可在此处自定义
-    DecibelThreshold thres(80.0, 60.0, 40.0);
+    DecibelThreshold thres(120.0, 100.0, 80.0);
     while (true) {
         getData();
         updateMapData(thres);

@@ -1,15 +1,4 @@
-#include "../Public_Class/Field.h"
-#include "../Public_Class/Speaker.h"
-#include <iostream>
-#include <iomanip>
-#include <vector>
-#include <string>
-#include <windows.h> 
-#include <fstream> // 添加文件操作头文件
-using std::cout;
-using std::cin;
-using std::string;
-using std::vector;
+#include "ShowMap.h"
 
 /* 
 关于控制台颜色,其中：
@@ -26,7 +15,6 @@ void setConsoleColor(int color) {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole, color);
 }
-
 
 // 需要迁移的数据
 Field field(0, 0); // 初始化场地大小
@@ -75,8 +63,6 @@ void getData() {
 
     inFile.close();
 }
-
-void showMap();
 
 // 更新分贝分布图数据
 void updateMapData() {

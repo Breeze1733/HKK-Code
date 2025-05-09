@@ -1,16 +1,5 @@
-#include "../Public_Class/Field.h"
-#include "../Public_Class/Speaker.h"
-#include <iostream>
-#include <iomanip>
-#include <vector>
-#include <windows.h> 
-#include <fstream>
-#include <direct.h>
-using std::cout;
-using std::cin;
-using std::string;
-using std::vector;
-using std::endl;
+#include "ShowMenu.h"
+
 
 Field field(0, 0); // 初始化场地大小
 vector<Speaker> speakers; // 存储音响对象的结构
@@ -94,8 +83,6 @@ void setData() {
     outFile.close();
     cout << "数据已成功写入到 " << outputPath << "\n";
 }
-
-void openMap();
 
 void openMap(){
     static bool isMapConsoleOpen = false;

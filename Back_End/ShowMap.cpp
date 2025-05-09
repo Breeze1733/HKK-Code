@@ -2,6 +2,8 @@
 #include "../Public_Class/Field.h"
 #include "../Public_Class/Speaker.h"
 #include <sstream>
+#include <windows.h>
+#include <algorithm> // For std::min
 
 /* 
 关于控制台颜色,其中：
@@ -52,18 +54,14 @@ bool isSpeakerAt(int x, int y) {
 // 声音叠加：能量相加，最后转回分贝
 double sumDecibelAt(int x, int y) {
     double totalPower = 0.0;
+    static const double MIN_DB_CONTRIBUTION = 1.0;
     for (const auto& sp : speakers) {
         double dx = x - sp.getX();
         double dy = y - sp.getY();
         double r = sqrt(dx * dx + dy * dy);
         double dB = sp.getDecibel();
-        double dB_at_r;
-        if (r < 1e-3) {
-            dB_at_r = dB;
-        } else {
-            dB_at_r = dB - 20.0 * log10(r);
-        }
-        if (dB_at_r < 0) continue; // 贡献极小可忽略
+        double dB_at_r = (r < 1e-3) ? dB : dB - 20.0 * log10(r);
+        if (dB_at_r < MIN_DB_CONTRIBUTION) continue; // 贡献极小可忽略
         totalPower += pow(10.0, dB_at_r / 10.0);
     }
     if (totalPower < 1e-6) return 0.0;
@@ -119,31 +117,78 @@ void updateMapData(const DecibelThreshold& thres) {
 void showMap(const DecibelThreshold& thres) {
     int width = field.getWidth();
     int length = field.getLength();
-    std::ostringstream oss;
     if (width > 0 && length > 0) {
         for (int i = 0; i < length; ++i) {
+            int lastColor = -1;
+            std::string buffer;
             for (int j = 0; j < width; ++j) {
                 bool isSpeaker = isSpeakerAt(j, i);
                 double dB = sumDecibelAt(j, i);
-                setColorByDecibel(dB, isSpeaker, thres);
-                cout << "の";
+                int color;
+                if (isSpeaker) {
+                    color = 13;
+                } else if (dB >= thres.over) {
+                    color = 12;
+                } else if (dB >= thres.good) {
+                    color = 14;
+                } else if (dB >= thres.low) {
+                    color = 8;
+                } else {
+                    color = 7;
+                }
+                if (color != lastColor && !buffer.empty()) {
+                    setConsoleColor(lastColor);
+                    std::cout << buffer;
+                    buffer.clear();
+                }
+                buffer += "の";
+                lastColor = color;
+            }
+            if (!buffer.empty()) {
+                setConsoleColor(lastColor);
+                std::cout << buffer;
             }
             setConsoleColor(7);
-            cout << "\n";
+            std::cout << "\n";
         }
     } else {
-        cout << "\n尚未设置场地大小\n";
+        std::cout << "\n尚未设置场地大小\n";
     }
 }
 
+// // 根据场地尺寸设置控制台缓冲区和窗口大小，并最大化窗口
+// void setupConsoleForField(int width, int length) {
+//     HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+//     COORD bufferSize = {
+//         static_cast<SHORT>(std::min(width, 1000)),
+//         static_cast<SHORT>(std::min(length, 1000))
+//     };
+//     SetConsoleScreenBufferSize(hOut, bufferSize);
+
+//     SHORT winRight = static_cast<SHORT>(bufferSize.X - 1);
+//     SHORT winBottom = static_cast<SHORT>(bufferSize.Y - 1);
+//     SMALL_RECT winRect = {0, 0, winRight, winBottom};
+//     SetConsoleWindowInfo(hOut, TRUE, &winRect);
+
+//     ShowWindow(GetConsoleWindow(), SW_MAXIMIZE);
+// }
+
 int main() {
     SetConsoleOutputCP(CP_UTF8);
-    // 阈值可在此处自定义
-    DecibelThreshold thres(120.0, 100.0, 80.0);
+
+    // 推荐阈值
+    DecibelThreshold thres(100.0, 93.0, 85.0);
     cout << "输入 exit 后回车可退出，输入任意内容回车可刷新分布图。\n";
     while (true) {
         getData();
+
+        // // 读取场地尺寸并设置控制台
+        // int width = field.getWidth();
+        // int length = field.getLength();
+        // setupConsoleForField(width, length);
+
         updateMapData(thres);
+
         cout << "请输入指令（exit 或其他）：";
         string str;
         cin >> str;

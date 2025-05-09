@@ -1,33 +1,81 @@
 {
+    "version": "2.0.0",
     "tasks": [
         {
-            "type": "cppbuild",
-            "label": "C/C++: gcc.exe 生成活动文件",
-            "command": "D:\\Program Files\\mingw64\\bin\\gcc.exe",
+            "label": "Build ShowMenu",
+            "type": "shell",
+            "command": "g++",
             "args": [
-                "-fdiagnostics-color=always",
-                "-g",
-                "test.cpp",
-                "ShowMenu.cpp",
-                "ShowMap.cpp",
-                "-o",
-                "test.exe",
+                "-std=c++17",
+                "-mconsole",
                 "-I",
-                "c:\\Users\\XiaoHe\\Desktop\\HeiKuangKuang\\HKK Code",
-                "-lstdc++"
-            ],
-            "options": {
-                "cwd": "${fileDirname}"
-            },
-            "problemMatcher": [
-                "$gcc"
+                "./Public_Class",
+                "Front_End/ShowMenu.cpp",
+                "-o",
+                "Output/ShowMenu.exe"
             ],
             "group": {
                 "kind": "build",
                 "isDefault": true
             },
-            "detail": "调试器生成的任务。"
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "detail": "编译 ShowMenu.cpp 并生成可执行文件"
+        },
+        {
+            "label": "Run ShowMenu",
+            "type": "shell",
+            "command": "Output/ShowMenu.exe",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "detail": "运行生成的 ShowMenu.exe"
+        },
+        {
+            "label": "Build ShowMap",
+            "type": "shell",
+            "command": "g++",
+            "args": [
+                "-std=c++17",
+                "-mconsole",
+                "-I",
+                "./Public_Class",
+                "Back_End/ShowMap.cpp",
+                "-o",
+                "Output/ShowMap.exe"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "detail": "编译 ShowMap.cpp 并生成可执行文件"
+        },
+        {
+            "label": "Run ShowMap",
+            "type": "shell",
+            "command": "Output/ShowMap.exe",
+            "group": {
+                "kind": "test",
+                "isDefault": false
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "detail": "运行生成的 ShowMap.exe"
         }
-    ],
-    "version": "2.0.0"
+    ]
 }

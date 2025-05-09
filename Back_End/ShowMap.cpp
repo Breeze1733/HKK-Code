@@ -1,10 +1,11 @@
-#include "ShowMap.h"
-#include "ShowMenu.h"
+#include "../Public_Class/Field.h"
+#include "../Public_Class/Speaker.h"
 #include <iostream>
 #include <iomanip>
 #include <vector>
 #include <string>
 #include <windows.h> 
+#include <fstream> // 添加文件操作头文件
 using std::cout;
 using std::cin;
 using std::string;
@@ -26,18 +27,10 @@ void setConsoleColor(int color) {
     SetConsoleTextAttribute(hConsole, color);
 }
 
-// 辅助函数：设置光标位置
-void setCursorPosition(int x, int y) {
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    COORD position = { static_cast<SHORT>(x), static_cast<SHORT>(y) };
-    SetConsoleCursorPosition(hConsole, position);
-}
 
 // 需要迁移的数据
-
-extern vector<Speaker> speakers;
-extern int fieldWidth;
-extern int fieldLength;
+Field field(0, 0); // 初始化场地大小
+vector<Speaker> speakers; // 存储音响对象的结构
 
 // 相关运算接口
 void changeColor(int x,int y){
@@ -53,28 +46,52 @@ void changeColor(int x,int y){
     }
 }
 
-// 全局变量
-static vector<Speaker> mapSpeakers;
-static int mapFieldWidth = 0;
-static int mapFieldLength = 0;
+void getData() {
+    // 创建输入文件路径
+    std::string inputPath = "output/data.txt";
+    std::ifstream inFile(inputPath);
+
+    if (!inFile) {
+        cout << "无法读取文件: " << inputPath << "\n";
+        return;
+    }
+
+    // 读取 Field 数据
+    int width, length;
+    inFile >> width >> length;
+    field.setWidth(width);
+    field.setLength(length);
+
+    // 读取 Speaker 数据
+    int speakerCount;
+    inFile >> speakerCount;
+    speakers.clear();
+    for (int i = 0; i < speakerCount; ++i) {
+        string name;
+        int x, y, decibel;
+        inFile >> name >> x >> y >> decibel;
+        speakers.emplace_back(name, x, y, decibel);
+    }
+
+    inFile.close();
+}
+
+void showMap();
 
 // 更新分贝分布图数据
-void updateMapData(const vector<Speaker>& speakers, int width, int length) {
-    mapSpeakers = speakers;
-    mapFieldWidth = width;
-    mapFieldLength = length;
-
-    // 清空控制台并重新绘制分贝分布图
+void updateMapData() {
     system("cls");
     showMap();
 }
 
 // 显示分贝分布图
 void showMap() {
-    if (mapFieldWidth > 0 && mapFieldLength > 0) {
+    int width = field.getWidth();
+    int length = field.getLength();
+    if (width > 0 && length > 0) {
         cout << "\n分贝分布模拟图 (每个#表示一平方米):\n";
-        for (int i = 0; i < mapFieldLength; ++i) {
-            for (int j = 0; j < mapFieldWidth; ++j) {
+        for (int i = 0; i < length; ++i) {
+            for (int j = 0; j < width; ++j) {
                 // 简单的颜色逻辑，后续可根据 Speaker 数据调整
                 setConsoleColor((i + j) % 15 + 1);
                 cout << "#";
@@ -85,4 +102,18 @@ void showMap() {
     } else {
         cout << "\n尚未设置场地大小\n";
     }
+}
+
+int main(){
+    SetConsoleOutputCP(CP_UTF8);
+    while(true){
+        getData();
+        updateMapData();
+        string str;
+        cin>>str;
+        if(str=="exit"){
+            break;
+        }
+    }
+    return 0;
 }

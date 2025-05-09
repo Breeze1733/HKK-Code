@@ -11,8 +11,8 @@ using std::cin;
 using std::string;
 using std::vector;
 
-void setConsoleColor(int color);
-void changeColor(int x,int y);
+void setConsoleColor(int);
+void changeColor(int,int);
 void getData();
 void showMap();
 void updateMapData();

@@ -75,12 +75,11 @@ void showMap() {
     int width = field.getWidth();
     int length = field.getLength();
     if (width > 0 && length > 0) {
-        cout << "\n分贝分布模拟图 (每个#表示一平方米):\n";
         for (int i = 0; i < length; ++i) {
             for (int j = 0; j < width; ++j) {
                 // 简单的颜色逻辑，后续可根据 Speaker 数据调整
                 setConsoleColor((i + j) % 15 + 1);
-                cout << "#";
+                cout << "の";
             }
             setConsoleColor(7); // 恢复默认颜色
             cout << "\n";

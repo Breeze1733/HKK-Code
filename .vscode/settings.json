@@ -3,6 +3,9 @@
         "iosfwd": "cpp",
         "iostream": "cpp",
         "iomanip": "cpp",
-        "vector": "cpp"
+        "vector": "cpp",
+        "string_view": "cpp",
+        "limits": "cpp",
+        "fstream": "cpp"
     }
 }

@@ -1,6 +1,7 @@
 #include "ShowMenu.h"
 
 
+
 Field field(0, 0); // 初始化场地大小
 vector<Speaker> speakers; // 存储音响对象的结构
 
@@ -20,88 +21,6 @@ void clearAboveLines(int linesToClear) {
     }
 }
 
-void showTitle() {
-    cout << "================ 音响分贝模拟系统 ================" << "\n";
-    cout << "图例：\n";
-    cout << "\033[32mの\033[0m 音量偏小" << "\033[33mの\033[0m 音量适中" << 
-            "\033[35mの\033[0m 音量偏大" << "\033[31mの\033[0m 音响位置 \n";
-    cout << "模拟分布图中，每一个“の”表示一平方米" << "\n";
-    cout << endl;
-}
-
-void showData() {
-    cout << "设定场地大小: " << field.getWidth() << " 米 x " << field.getLength() << " 米\n";
-    cout << "音响数量: " << speakers.size() << "\n";
-    cout << "音响列表:\n";
-    if(speakers.empty()) {
-        cout << "当前没有音响。\n";
-    } else {
-        for (size_t i = 0; i < speakers.size(); ++i) {
-            cout << left << setw(20) << speakers[i].getName() 
-                 << "坐标：("  << speakers[i].getX() << " , " << speakers[i].getY() << ") "
-                 << "分贝值：" << left << setw(10) << speakers[i].getDecibel() 
-                 << "\n";
-            }
-    }
-}
-// 显示主菜单
-void showMenu() {
-    showTitle();
-    showData();
-    cout << "功能菜单：" << "\n";
-    cout << left << setw(40) << "1. 设置场地大小" << "| " << "4. 删除指定音响" << "\n";
-    cout << left << setw(40) << "2. 添加新的音响" << "| " << "5. 打开分贝分布图"  << "\n";
-    cout << left << setw(43) << "3. 修改现有音响的参数" << "| " << "6. 退出程序" << "\n";
-    cout << "请选择操作: ";
-}
-
-// 设置场地大小
-
-void setFieldSize() {
-    while(true){
-        string str1, str2;
-        cout << "请输入场地左右宽度（单位：米）: ";
-        cin >> str1;
-        cout << "请输入场地上下宽度（单位：米）: ";
-        cin >> str2;
-
-        int width = stoi(str1);
-        int length = stoi(str2);
-        // 这里还缺少一些输入检测的逻辑
-        if (width > 0 && length > 0) {
-            cout << "场地大小设置为 " << width << " 米 x " << length << " 米。\n";
-            field.setWidth(width);
-            field.setLength(length);
-            break;
-        } else {
-            clearAboveLines(2);
-            cout << "输入无效，请重新设置场地大小,按任意键继续...\n";
-            system("pause > nul");
-        }
-    }
-}
-
-// 添加新的音响
-// 考虑给音箱标序号①到⑩这样，输出在图上直接用序号表示某个音箱
-// 缺点是只能同时存在十个音箱
-void addSpeaker() {
-    Speaker newSpeaker;
-    string name;
-    int x, y, decibel;
-    cout << "请输入音响名称: ";
-    cin >> name;
-    cout << "请输入音响位置(x y): ";
-    cin >> x >> y;
-    cout << "请输入音响分贝值: ";
-    cin >> decibel;
-    newSpeaker.setName(name);
-    newSpeaker.setX(x);
-    newSpeaker.setY(y);
-    newSpeaker.setDecibel(decibel);
-    speakers.push_back(newSpeaker);
-    cout << "音响添加成功！\n";
-}
-
 void setData() {
     // 创建输出文件路径
     std::string outputPath = "output/data.txt";
@@ -118,7 +37,7 @@ void setData() {
     // 写入 Speaker 数据
     outFile << speakers.size() << "\n"; // 先写入音响数量
     for (auto& speaker : speakers) {
-        outFile << speaker.getName() << " " << speaker.getX() << " " << speaker.getY() << " " << speaker.getDecibel() << "\n";
+        outFile << speaker.getX() << " " << speaker.getY() << " " << speaker.getDecibel() << "\n";
     }
 
     outFile.close();
@@ -128,54 +47,167 @@ void updateData(){
     cout << "数据已更新，在另一工作台输入任意内容后回车，更新分布图\n";
     cout << "按任意键继续...\n";
     system("pause > nul");
-    clearAboveLines(5);
+    clearConsoleBelow(5);
+}
+
+void showTitle() {
+    cout << "================== 音响分贝模拟系统 ==================" << "\n";
+    cout << "图例：\n";
+    cout << "\033[32mの\033[0m音量偏小    " << "\033[33mの\033[0m音量适中    " << 
+            "\033[35mの\033[0m音量偏大    " << "\033[31mの\033[0m音响位置    " << "\n";
+    cout << "模拟分布图中，每一个“の”表示一平方米，左上角为坐标原点" << "\n";
+    cout << endl;
+}
+
+void showData() {
+    cout << "设定场地大小: " << field.getWidth() << " 米 x " << field.getLength() << " 米\n";
+    cout << "音响数量: " << speakers.size() << "\n";
+    cout << "音响列表:\n";
+    if(speakers.empty()) {
+        cout << "当前没有音响。\n";
+    } else {
+        cout << left << setw(10) << "序号" 
+             << left << setw(20) << "坐标" 
+             << left << setw(10) << "平均分贝值" 
+             << "\n";
+        for (size_t i = 0; i < speakers.size(); ++i) {
+            string location = "(" + to_string(speakers[i].getX()) + ", " + to_string(speakers[i].getY()) + ")";
+            cout << left << setw(10) << i + 1 
+                 << left << setw(20) << location
+                 << left << setw(10) << speakers[i].getDecibel() 
+                 << "\n";
+            }
+    }
+}
+// 显示主菜单
+void showCommandMenu() {
+    showData();
+    cout << "功能菜单：" << "\n";
+    cout << left << setw(37) << "1. 设置场地大小" << "|   " << "4. 删除指定音响" << "\n";
+    cout << left << setw(37) << "2. 添加新的音响" << "|   " << "5. 打开分贝分布图"  << "\n";
+    cout << left << setw(40) << "3. 修改现有音响的参数" << "|   " << "6. 退出程序" << "\n";
+    cout << "请选择操作: ";
+}
+
+int getInput(const int &min_value, const int &max_value) {
+    string input;
+    //
+    getline(cin, input);
+    if (input.length() > 9 || input.empty()) {
+        return -1;
+    }
+    for (char c : input) {
+        if (c < '0' || c > '9') {
+            return -1;
+        }
+    }
+    int value = stoi(input);
+    if(value > max_value || value < min_value) {
+        return -1;
+    }
+    return value;
+}
+
+int askQuestion(const int &min_value, const int &max_value, const string& question) {
+    int ans = -1;
+    while(true){
+        cout << question;
+        ans = getInput(min_value, max_value);
+        if (ans == -1) {
+            cout << "输入无效，请重新输入合法的正整数，按任意键继续...\n";
+            system("pause > nul");
+            clearAboveLines(2);
+            continue;
+        }
+        else {
+            return ans;
+        }
+    }
+}
+
+// 设置场地大小
+void setFieldSize() {
+    cout << "您正在设置场地大小...\n";
+    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    field.setWidth(askQuestion(1,10000, "请输入场地左右宽度(米): "));
+    field.setLength(askQuestion(1,10000, "请输入场地上下宽度(米): "));
+    cout << "场地大小设置成功！\n";
+}
+
+// 添加新的音响
+void addSpeaker() {
+    Speaker newSpeaker;
+    int x, y, decibel;
+    cout << "您正在添加新的音响，这是第" << speakers.size() + 1 << "号音箱...\n";
+    cout << "请输入音响位置(x,y) " << "(范围: 0 ~ " << field.getWidth() << " , 0 ~ " << field.getLength() << " )\n";
+    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    newSpeaker.setX(askQuestion(0,field.getWidth(), "请输入音响位置x坐标: "));
+    newSpeaker.setY(askQuestion(0,field.getLength(), "请输入音响位置y坐标: "));
+    newSpeaker.setDecibel(askQuestion(0,200, "请输入音响输出的平均分贝值: "));
+    speakers.push_back(newSpeaker);
+    cout << "音响添加成功！\n";
+}
+
+// 修改音响参数
+void modifySpeaker() {
+    if(speakers.empty()) {
+        cout << "当前没有音响，无法修改参数。\n";
+        return;
+    }
+    int index = 0;
+    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    index = askQuestion(1, speakers.size(), "请输入要修改参数的音响序号: ");
+    cout << "请输入音响位置(x,y) " << "(范围: 0 ~ " << field.getWidth() << " , 0 ~ " << field.getLength() << " )\n";
+    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    speakers[index - 1].setX(askQuestion(0,field.getWidth(), "请输入音响位置x坐标: "));
+    speakers[index - 1].setY(askQuestion(0,field.getLength(), "请输入音响位置y坐标: "));
+    speakers[index - 1].setDecibel(askQuestion(0,200, "请输入音响输出的平均分贝值: "));
+    cout << "音响参数修改成功！\n";
+}
+
+// 删除音响
+void deleteSpeaker() {
+    if(speakers.empty()) {
+        cout << "当前没有音响，无法删除。\n";
+        return;
+    }
+    int index;
+    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    index = askQuestion(1, speakers.size(), "请输入要删除的音响序号: ");
+    speakers.erase(speakers.begin() + index - 1);
+    cout << "音响删除成功！\n";
 }
 
 void openMap(){
     static bool isMapConsoleOpen = false;
     if (!isMapConsoleOpen) {
-        cout << "使用说明：\n";
-        cout << "输入“exit”后回车可以关闭分贝分布图。\n";
-        cout << "输入任意其他内容回车可以更新分贝分布图。\n";
-        cout << "正在打开分贝分布图，按任意键继续...\n";
-        system("pause > nul");
-        system("start \"\" \"ShowMap.exe\"");
         isMapConsoleOpen = true;
-    } else {
-        cout << "分贝分布图已经打开，请检查。\n";
-        cout << "是否重置分贝分布图打开状态？\n";
-        cout << "1. 是     2. 否" << "\n";
-        cout << "请输入选择：";
-        int choice;
-        while(true){
-            cin >> choice;
-            if (choice == 1) {
-                isMapConsoleOpen = false;
-                system("taskkill /IM ShowMap.exe /F > nul 2>&1");
-                cout << "分贝分布图打开状态已重置。\n";
-                setData();
-                openMap();
-                break;
-            } else if(choice == 2){
-                cout << "分贝分布图打开状态未更改。\n";
-                cout << "按任意键继续...\n";
-                system("pause > nul");
-                break;
-            }else{
-                clearAboveLines(1);
-                cout << "输入无效，请重新输入选择：\n";
-            }
-        }
     }
+    else {
+        system("taskkill /IM ShowMap.exe /F > nul 2>&1");   
+    }
+    cout << "使用说明：\n";
+    cout << "输入“exit”后回车可以关闭分贝分布图。\n";
+    cout << "输入任意其他内容回车可以更新分贝分布图。\n";
+    cout << "正在打开分贝分布图，按任意键继续...\n";
+    system("pause > nul");
+    system("start \"\" \"ShowMap.exe\"");
 }
+
 // 主菜单逻辑
 // 后面有时间考虑加一个储存功能，把暂存的方案储存起来可以直接读取
 void menuLogic() {
+    showTitle();
     int choice;
     do {
-        system("cls");
-        showMenu();
-        cin >> choice;
+        showCommandMenu();
+        string str_choice;
+        cin >> str_choice;
+        if (str_choice.length() > 1 || str_choice.empty()) {
+            choice = -1;
+        } else {
+            choice = str_choice[0] - '0';
+        }
         switch (choice) {
             case 1:
                 setFieldSize();
@@ -186,11 +218,11 @@ void menuLogic() {
                 updateData();
                 break;
             case 3:
-                cout << "修改音响功能尚未实现。\n";
+                modifySpeaker();
                 updateData();
                 break;
             case 4:
-                cout << "删除音响功能尚未实现。\n";
+                deleteSpeaker();
                 updateData();
                 break;
             case 5: 
@@ -207,6 +239,7 @@ void menuLogic() {
                 cout << "无效的选择，请重新选择。\n";
                 cout << "按任意键继续...\n";
                 system("pause > nul");
+                clearConsoleBelow(5);
         }
     } while (choice != 6);
 }

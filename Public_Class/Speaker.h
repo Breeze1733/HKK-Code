@@ -6,20 +6,17 @@ using std::string;
 
 class Speaker {
     private:
-        string name; 
         int x;
         int y;       
         int decibel; 
     public:
-        Speaker() : name(""), x(0), y(0), decibel(0) {} 
-        Speaker(string n, int xPos, int yPos, int db) : name(n), x(xPos), y(yPos), decibel(db) {} 
-        string getName() { return name; }
-        void setName(string n) { name = n; }
-        int getX() { return x; }
+        Speaker() : x(0), y(0), decibel(0) {} 
+        Speaker(int xPos, int yPos, int db) : x(xPos), y(yPos), decibel(db) {}
+        int getX() const { return x; }
         void setX(int xPos) { x = xPos; }
-        int getY() { return y; }
+        int getY() const { return y; }
         void setY(int yPos) { y = yPos; }
-        int getDecibel() { return decibel; } 
+        int getDecibel() const { return decibel; } 
         void setDecibel(int db) { decibel = db; } 
 };
 

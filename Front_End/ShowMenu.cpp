@@ -1,7 +1,5 @@
 #include "ShowMenu.h"
 
-
-
 Field field(0, 0); // 初始化场地大小
 vector<Speaker> speakers; // 存储音响对象的结构
 
@@ -63,22 +61,28 @@ void showData() {
     cout << "设定场地大小: " << field.getWidth() << " 米 x " << field.getLength() << " 米\n";
     cout << "音响数量: " << speakers.size() << "\n";
     cout << "音响列表:\n";
-    if(speakers.empty()) {
+
+    if (speakers.empty()) {
         cout << "当前没有音响。\n";
     } else {
-        cout << left << setw(10) << "序号" 
-             << left << setw(20) << "坐标" 
-             << left << setw(10) << "平均分贝值" 
-             << "\n";
+        // 表头
+        cout << "┌──────────┬──────────────────────┬──────────────┐\n";
+        cout << "│ 序号     │ 坐标                 │ 平均分贝值   │\n";
+        cout << "├──────────┼──────────────────────┼──────────────┤\n";
+
+        // 表格内容
         for (size_t i = 0; i < speakers.size(); ++i) {
             string location = "(" + to_string(speakers[i].getX()) + ", " + to_string(speakers[i].getY()) + ")";
-            cout << left << setw(10) << i + 1 
-                 << left << setw(20) << location
-                 << left << setw(10) << speakers[i].getDecibel() 
-                 << "\n";
-            }
+            cout << "│ " << left << setw(8) << i + 1 << " │ " 
+                 << left << setw(20) << location << " │ " 
+                 << left << setw(12) << speakers[i].getDecibel() << " │\n";
+        }
+
+        // 表尾
+        cout << "└──────────┴──────────────────────┴──────────────┘\n";
     }
 }
+
 // 显示主菜单
 void showCommandMenu() {
     showData();
@@ -136,6 +140,10 @@ void setFieldSize() {
 
 // 添加新的音响
 void addSpeaker() {
+    if (field.getWidth() == 0 || field.getLength() == 0) {
+        cout << "请先设置场地大小！\n";
+        return;
+    }
     Speaker newSpeaker;
     int x, y, decibel;
     cout << "您正在添加新的音响，这是第" << speakers.size() + 1 << "号音箱...\n";
@@ -158,7 +166,6 @@ void modifySpeaker() {
     cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     index = askQuestion(1, speakers.size(), "请输入要修改参数的音响序号: ");
     cout << "请输入音响位置(x,y) " << "(范围: 0 ~ " << field.getWidth() << " , 0 ~ " << field.getLength() << " )\n";
-    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     speakers[index - 1].setX(askQuestion(0,field.getWidth(), "请输入音响位置x坐标: "));
     speakers[index - 1].setY(askQuestion(0,field.getLength(), "请输入音响位置y坐标: "));
     speakers[index - 1].setDecibel(askQuestion(0,200, "请输入音响输出的平均分贝值: "));
@@ -228,6 +235,7 @@ void menuLogic() {
             case 5: 
                 setData();
                 openMap();
+                clearConsoleBelow(5);
                 break;
             case 6:
                 if (system("tasklist /FI \"IMAGENAME eq ShowMap.exe\" 2>NUL | find /I \"ShowMap.exe\" >NUL") == 0) {

@@ -15,7 +15,8 @@ void saveDataToFile(const string & outputPath) {
 
     outFile << speakers.size() << "\n";
     for (auto& speaker : speakers) {
-        outFile << speaker.getX() << " " << speaker.getY() << " " << speaker.getDecibel() << "\n";
+        outFile << speaker.getX() << " " << speaker.getY() << " " 
+                << speaker.getSensitivity() << " " << speaker.getRatedPower() << "\n";
     }
 
     outFile.close();
@@ -35,16 +36,19 @@ void showMenu() {
     if (speakers.empty()) {
         cout << "当前没有音响。\n";
     } else {
-        cout << "┌──────────┬──────────────────────┬──────────────┐\n";
-        cout << "│ 序号     │ 坐标                 │ 平均分贝值   │\n";
-        cout << "├──────────┼──────────────────────┼──────────────┤\n";
+        cout << "┌────────┬─────────────────┬────────────┬────────────┐\n";
+        cout << "│ 序号   │ 坐标            │ 灵敏度     │ 平均功率   │\n";
+        cout << "├────────┼─────────────────┼────────────┼────────────┤\n";
         for (size_t i = 0; i < speakers.size(); ++i) {
             string location = "(" + to_string(speakers[i].getX()) + ", " + to_string(speakers[i].getY()) + ")";
-            cout << "│ " << left << setw(8) << i + 1 << " │ " 
-                 << left << setw(20) << location << " │ " 
-                 << left << setw(12) << speakers[i].getDecibel() << " │\n";
+            string sensitivity = to_string(speakers[i].getSensitivity()) + " dB/W/m";
+            string power = to_string(speakers[i].getRatedPower()) + " W";
+            cout << "│ " << left << setw(6)  << i + 1       << " │ " 
+                         << left << setw(15) << location    << " │ " 
+                         << left << setw(10) << sensitivity << " │ "
+                         << left << setw(10) << power       << " │\n";
         }
-        cout << "└──────────┴──────────────────────┴──────────────┘\n";
+        cout << "└────────┴─────────────────┴────────────┴────────────┘\n";
     }
     cout << "功能菜单：" << "\n";
     cout << left << setw(37) << "1. 设置场地大小" << "|   " << "5. 打开分贝分布图" << "\n";
@@ -70,13 +74,13 @@ void addSpeaker() {
         return;
     }
     Speaker newSpeaker;
-    int x, y, decibel;
     cout << "您正在添加新的音响，这是第" << speakers.size() + 1 << "号音箱...\n";
     cout << "请输入音响位置(x,y) " << "(范围: 0 ~ " << field.getWidth() << " , 0 ~ " << field.getLength() << " )\n";
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    newSpeaker.setX(askQuestion(0,field.getWidth(), "请输入音响位置x坐标: "));
-    newSpeaker.setY(askQuestion(0,field.getLength(), "请输入音响位置y坐标: "));
-    newSpeaker.setDecibel(askQuestion(0,200, "请输入音响输出的平均分贝值: "));
+    newSpeaker.setX(askQuestion(0,field.getWidth(), "请输入x坐标: "));
+    newSpeaker.setY(askQuestion(0,field.getLength(), "请输入y坐标: "));
+    newSpeaker.setSensitivity(askQuestion(50,150, "请输入音响的灵敏度(范围: 50 ~ 150)(dB/W/m): "));
+    newSpeaker.setRatedPower(askQuestion(0,1000, "请输入音响的平均功率(W): "));
     speakers.push_back(newSpeaker);
     cout << "音响添加成功！\n";
     updateData();
@@ -90,10 +94,11 @@ void modifySpeaker() {
     int index = 0;
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
     index = askQuestion(1, speakers.size(), "请输入要修改参数的音响序号: ");
-    cout << "请输入音响位置(x,y) " << "(范围: 0 ~ " << field.getWidth() << " , 0 ~ " << field.getLength() << " )\n";
-    speakers[index - 1].setX(askQuestion(0,field.getWidth(), "请输入音响位置x坐标: "));
-    speakers[index - 1].setY(askQuestion(0,field.getLength(), "请输入音响位置y坐标: "));
-    speakers[index - 1].setDecibel(askQuestion(0,200, "请输入音响输出的平均分贝值: "));
+    cout << "请输入音响新位置(x,y) " << "(范围: 0 ~ " << field.getWidth() << " , 0 ~ " << field.getLength() << " )\n";
+    speakers[index - 1].setX(askQuestion(0,field.getWidth(), "请输入x坐标: "));
+    speakers[index - 1].setY(askQuestion(0,field.getLength(), "请输入y坐标: "));
+    speakers[index - 1].setSensitivity(askQuestion(50,150, "请输入音响的新灵敏度(范围: 50 ~ 150)(dB/W/m): "));
+    speakers[index - 1].setRatedPower(askQuestion(0,1000, "请输入音响的新平均功率(W): "));
     cout << "音响参数修改成功！\n";
     updateData();
 }
@@ -158,13 +163,12 @@ void readSolution() {
     }
     speakers.clear();
     for (int i = 0; i < speakerCount; ++i) {
-        int x, y, decibel;
-        inFile >> x >> y >> decibel;
-        if (inFile.fail()) {
+        int x, y, sensitivity, ratedPower;
+        if (!(inFile >> x >> y >> sensitivity >> ratedPower)) {
             cout << "数据文件格式错误（音响参数）\n";
             return;
         }
-        speakers.emplace_back(x, y, decibel);
+        speakers.emplace_back(x, y, sensitivity, ratedPower);
     }
     inFile.close();
     saveDataToFile("output/data.txt");

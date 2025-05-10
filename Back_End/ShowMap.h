@@ -24,7 +24,6 @@ struct DecibelThreshold {
 };
 
 void setConsoleColor(int);
-void changeColor(int, int);
 void getData();
 void showMap(const DecibelThreshold& thres);
 void updateMapData(const DecibelThreshold& thres);

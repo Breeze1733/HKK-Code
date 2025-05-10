@@ -28,9 +28,7 @@ using std::streamsize;
 
 void saveDataToFile(const string &);
 void updateData();
-
 void showMenu();
-
 void setFieldSize();
 void addSpeaker();
 void modifySpeaker();

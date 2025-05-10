@@ -74,7 +74,7 @@ double sumDecibelAt(int x, int y) {
         double dx = x - sp.getX();
         double dy = y - sp.getY();
         double r = sqrt(dx * dx + dy * dy);
-        double dB = sp.getDecibel();
+        double dB = sp.getRatedPower();
         double dB_at_r = (r < 1e-3) ? dB : dB - 20.0 * log10(r);
         if (dB_at_r < MIN_DB_CONTRIBUTION) continue; // 贡献极小可忽略
         totalPower += pow(10.0, dB_at_r / 10.0);
@@ -110,13 +110,12 @@ void getData() {
     }
     speakers.clear();
     for (int i = 0; i < speakerCount; ++i) {
-        int x, y, decibel;
-        inFile >> x >> y >> decibel;
-        if (inFile.fail()) {
+        int x, y, sensitivity, ratedPower;
+        if (!(inFile >> x >> y >> sensitivity >> ratedPower)) {
             cout << "数据文件格式错误（音响参数）\n";
             return;
         }
-        speakers.emplace_back(x, y, decibel);
+        speakers.emplace_back(x, y, sensitivity, ratedPower);
     }
 
     inFile.close();

@@ -26,6 +26,8 @@ void updateData();
 void showTitle();
 void showData();
 void showCommandMenu();
+int getInput(const int &, const int &);
+int askQuestion(const int &, const int &, const string&);
 void setFieldSize();
 void addSpeaker();
 void modifySpeaker();

@@ -95,13 +95,13 @@ void getData() {
     }
     speakers.clear();
     for (int i = 0; i < speakerCount; ++i) {
-        string name;
         int x, y, decibel;
-        if (!(inFile >> name >> x >> y >> decibel)) {
+        inFile >> x >> y >> decibel;
+        if (inFile.fail()) {
             cout << "数据文件格式错误（音响参数）\n";
-            break;
+            return;
         }
-        speakers.emplace_back(name, x, y, decibel);
+        speakers.emplace_back(x, y, decibel);
     }
 
     inFile.close();

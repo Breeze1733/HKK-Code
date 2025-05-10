@@ -21,7 +21,8 @@ using std::setfill;
 using std::to_string;
 void clearConsoleBelow(int);
 void clearAboveLines(int);
-void setData();
+void setData(const string &);
+void getData(const string &);
 void updateData();
 void showTitle();
 void showData();
@@ -34,5 +35,8 @@ void modifySpeaker();
 void deleteSpeaker();
 void openMap();
 void menuLogic();
+
+
+void exitProgram();
 
 #endif // SHOWMENU_H

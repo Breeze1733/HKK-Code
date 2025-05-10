@@ -19,31 +19,27 @@ void clearAboveLines(int linesToClear) {
     }
 }
 
-void setData() {
-    // 创建输出文件路径
-    std::string outputPath = "output/data.txt";
+// 数据操作model
+void setData(const string & outputPath) {
     std::ofstream outFile(outputPath);
 
     if (!outFile) {
         cout << "无法创建文件: " << outputPath << "\n";
         return;
     }
-
-    // 写入 Field 数据
     outFile << field.getWidth() << " " << field.getLength() << "\n";
 
-    // 写入 Speaker 数据
-    outFile << speakers.size() << "\n"; // 先写入音响数量
+    outFile << speakers.size() << "\n";
     for (auto& speaker : speakers) {
         outFile << speaker.getX() << " " << speaker.getY() << " " << speaker.getDecibel() << "\n";
     }
 
     outFile.close();
 }
+
 void updateData(){
-    setData();
-    cout << "数据已更新，在另一工作台输入任意内容后回车，更新分布图\n";
-    cout << "按任意键继续...\n";
+    setData("output/data.txt");
+    cout << "数据已更新，按任意键继续...\n";
     system("pause > nul");
     clearConsoleBelow(5);
 }
@@ -65,31 +61,26 @@ void showData() {
     if (speakers.empty()) {
         cout << "当前没有音响。\n";
     } else {
-        // 表头
         cout << "┌──────────┬──────────────────────┬──────────────┐\n";
         cout << "│ 序号     │ 坐标                 │ 平均分贝值   │\n";
         cout << "├──────────┼──────────────────────┼──────────────┤\n";
-
-        // 表格内容
         for (size_t i = 0; i < speakers.size(); ++i) {
             string location = "(" + to_string(speakers[i].getX()) + ", " + to_string(speakers[i].getY()) + ")";
             cout << "│ " << left << setw(8) << i + 1 << " │ " 
                  << left << setw(20) << location << " │ " 
                  << left << setw(12) << speakers[i].getDecibel() << " │\n";
         }
-
-        // 表尾
         cout << "└──────────┴──────────────────────┴──────────────┘\n";
     }
 }
 
-// 显示主菜单
 void showCommandMenu() {
     showData();
     cout << "功能菜单：" << "\n";
-    cout << left << setw(37) << "1. 设置场地大小" << "|   " << "4. 删除指定音响" << "\n";
-    cout << left << setw(37) << "2. 添加新的音响" << "|   " << "5. 打开分贝分布图"  << "\n";
-    cout << left << setw(40) << "3. 修改现有音响的参数" << "|   " << "6. 退出程序" << "\n";
+    cout << left << setw(37) << "1. 设置场地大小" << "|   " << "5. 打开分贝分布图" << "\n";
+    cout << left << setw(37) << "2. 添加新的音响" << "|   " << "6. 保存当前方案"  << "\n";
+    cout << left << setw(40) << "3. 修改现有音响的参数" << "|   " << "7. 读取保存的方案" << "\n";
+    cout << left << setw(37) << "4. 删除指定音响" << "|   " << "8. 退出程序"  << "\n";
     cout << "请选择操作: ";
 }
 
@@ -129,7 +120,6 @@ int askQuestion(const int &min_value, const int &max_value, const string& questi
     }
 }
 
-// 设置场地大小
 void setFieldSize() {
     cout << "您正在设置场地大小...\n";
     cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -138,7 +128,6 @@ void setFieldSize() {
     cout << "场地大小设置成功！\n";
 }
 
-// 添加新的音响
 void addSpeaker() {
     if (field.getWidth() == 0 || field.getLength() == 0) {
         cout << "请先设置场地大小！\n";
@@ -156,7 +145,6 @@ void addSpeaker() {
     cout << "音响添加成功！\n";
 }
 
-// 修改音响参数
 void modifySpeaker() {
     if(speakers.empty()) {
         cout << "当前没有音响，无法修改参数。\n";
@@ -172,7 +160,6 @@ void modifySpeaker() {
     cout << "音响参数修改成功！\n";
 }
 
-// 删除音响
 void deleteSpeaker() {
     if(speakers.empty()) {
         cout << "当前没有音响，无法删除。\n";
@@ -201,8 +188,61 @@ void openMap(){
     system("start \"\" \"ShowMap.exe\"");
 }
 
-// 主菜单逻辑
-// 后面有时间考虑加一个储存功能，把暂存的方案储存起来可以直接读取
+void storeSolution() {
+    setData("output/solution.txt");
+    cout << "您方案已保存在“output/solution.txt”当中，按任意键继续...\n";
+    system("pause > nul");
+    clearAboveLines(1);
+}
+
+void readSolution() {
+    string inputPath = "output/solution.txt";
+    std::ifstream inFile(inputPath);
+    if (!inFile) {
+        cout << "读取错误，暂无储存方案，按任意键继续...\n";
+        system("pause > nul");
+        clearAboveLines(1);
+        return;
+    }
+    int width, length;
+    if (!(inFile >> width >> length)) {
+        cout << "数据文件格式错误（场地大小）\n";
+        return;
+    }
+    field.setWidth(width);
+    field.setLength(length);
+    int speakerCount;
+    if (!(inFile >> speakerCount)) {
+        cout << "数据文件格式错误（音响数量）\n";
+        return;
+    }
+    speakers.clear();
+    for (int i = 0; i < speakerCount; ++i) {
+        int x, y, decibel;
+        inFile >> x >> y >> decibel;
+        if (inFile.fail()) {
+            cout << "数据文件格式错误（音响参数）\n";
+            return;
+        }
+        speakers.emplace_back(x, y, decibel);
+    }
+    inFile.close();
+    setData("output/data.txt");
+    cout << "方案已读取，按任意键继续...\n";
+    system("pause > nul");
+    clearConsoleBelow(5);
+}
+
+void exitProgram() {
+    cout << "正在退出程序...\n";
+    if (system("tasklist /FI \"IMAGENAME eq ShowMap.exe\" 2>NUL | find /I \"ShowMap.exe\" >NUL") == 0) {
+        system("taskkill /IM ShowMap.exe /F > nul 2>&1");
+    }  
+    std::ofstream outFile("output/data.txt", std::ios::trunc);
+    outFile.close();
+}
+
+// 主菜单逻辑已经实现储存逻辑，在考虑要不要实现多个文件储存，选择某个读取的逻辑
 void menuLogic() {
     showTitle();
     int choice;
@@ -233,15 +273,17 @@ void menuLogic() {
                 updateData();
                 break;
             case 5: 
-                setData();
                 openMap();
                 clearConsoleBelow(5);
                 break;
             case 6:
-                if (system("tasklist /FI \"IMAGENAME eq ShowMap.exe\" 2>NUL | find /I \"ShowMap.exe\" >NUL") == 0) {
-                    system("taskkill /IM ShowMap.exe /F > nul 2>&1");
-                }
-                cout << "退出中...\n";
+                storeSolution();
+                break;
+            case 7:
+                readSolution();
+                break;
+            case 8:
+                exitProgram();
                 break;
             default:
                 cout << "无效的选择，请重新选择。\n";
@@ -249,7 +291,7 @@ void menuLogic() {
                 system("pause > nul");
                 clearConsoleBelow(5);
         }
-    } while (choice != 6);
+    } while (choice != 8);
 }
 
 int main(){

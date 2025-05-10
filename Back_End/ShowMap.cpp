@@ -4,6 +4,10 @@
 #include <sstream>
 #include <windows.h>
 #include <algorithm> // For std::min
+#include <conio.h>
+#include <iostream>
+#include <string>
+#include <vector>
 
 /* 
 关于控制台颜色,其中：
@@ -129,6 +133,14 @@ void showMap(const DecibelThreshold& thres) {
     int width = field.getWidth();
     int length = field.getLength();
     if (width > 0 && length > 0) {
+        HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+        CONSOLE_SCREEN_BUFFER_INFO csbi;
+        GetConsoleScreenBufferInfo(hConsole, &csbi);
+        int winLines = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
+        int linesPerPage = winLines - 2; // 留2行用于提示
+
+        int lineCount = 0;
+
         for (int i = 0; i < length; ++i) {
             int lastColor = -1;
             std::string buffer;
@@ -161,28 +173,21 @@ void showMap(const DecibelThreshold& thres) {
             }
             setConsoleColor(7);
             std::cout << "\n";
+            ++lineCount;
+
+            // 分页判断
+            if (lineCount >= linesPerPage) {
+                setConsoleColor(14);
+                std::cout << "按任意键继续..." << std::endl;
+                _getch();
+                system("cls");
+                lineCount = 0;
+            }
         }
     } else {
         std::cout << "\n尚未设置场地大小\n";
     }
 }
-
-// // 根据场地尺寸设置控制台缓冲区和窗口大小，并最大化窗口
-// void setupConsoleForField(int width, int length) {
-//     HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
-//     COORD bufferSize = {
-//         static_cast<SHORT>(std::min(width, 1000)),
-//         static_cast<SHORT>(std::min(length, 1000))
-//     };
-//     SetConsoleScreenBufferSize(hOut, bufferSize);
-
-//     SHORT winRight = static_cast<SHORT>(bufferSize.X - 1);
-//     SHORT winBottom = static_cast<SHORT>(bufferSize.Y - 1);
-//     SMALL_RECT winRect = {0, 0, winRight, winBottom};
-//     SetConsoleWindowInfo(hOut, TRUE, &winRect);
-
-//     ShowWindow(GetConsoleWindow(), SW_MAXIMIZE);
-// }
 
 int main() {
     SetConsoleOutputCP(CP_UTF8);

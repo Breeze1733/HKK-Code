@@ -1,26 +1,11 @@
-#include "ShowMenu.h"
+#include "MenuFunction.h"
+#include "CheckInput.h"
 
-Field field(0, 0); // 初始化场地大小
-vector<Speaker> speakers; // 存储音响对象的结构
+Field field(0, 0);
+vector<Speaker> speakers;
 
-void clearConsoleBelow(int linesToKeep) {
-    // 将光标移动到指定行之后
-    cout << "\033[" << linesToKeep + 1 << ";1H"; // 移动光标到第 linesToKeep+1 行
-    // 清除从光标到屏幕底部的内容
-    cout << "\033[J";
-}
-
-void clearAboveLines(int linesToClear) {
-    for (int i = 0; i < linesToClear; ++i) {
-        // 将光标移动到上一行的开头
-        cout << "\033[F";
-        // 清除当前行内容
-        cout << "\033[2K";
-    }
-}
-
-// 数据操作model
-void setData(const string & outputPath) {
+// 文件数据维护
+void saveDataToFile(const string & outputPath) {
     std::ofstream outFile(outputPath);
 
     if (!outFile) {
@@ -36,28 +21,18 @@ void setData(const string & outputPath) {
 
     outFile.close();
 }
-
 void updateData(){
-    setData("output/data.txt");
+    saveDataToFile("output/data.txt");
     cout << "数据已更新，按任意键继续...\n";
     system("pause > nul");
     clearConsoleBelow(5);
 }
 
-void showTitle() {
-    cout << "================== 音响分贝模拟系统 ==================" << "\n";
-    cout << "图例：\n";
-    cout << "\033[32mの\033[0m音量偏小    " << "\033[33mの\033[0m音量适中    " << 
-            "\033[35mの\033[0m音量偏大    " << "\033[31mの\033[0m音响位置    " << "\n";
-    cout << "模拟分布图中，每一个“の”表示一平方米，左上角为坐标原点" << "\n";
-    cout << endl;
-}
-
-void showData() {
+// 功能菜单
+void showCommandMenu() {
     cout << "设定场地大小: " << field.getWidth() << " 米 x " << field.getLength() << " 米\n";
     cout << "音响数量: " << speakers.size() << "\n";
     cout << "音响列表:\n";
-
     if (speakers.empty()) {
         cout << "当前没有音响。\n";
     } else {
@@ -72,10 +47,6 @@ void showData() {
         }
         cout << "└──────────┴──────────────────────┴──────────────┘\n";
     }
-}
-
-void showCommandMenu() {
-    showData();
     cout << "功能菜单：" << "\n";
     cout << left << setw(37) << "1. 设置场地大小" << "|   " << "5. 打开分贝分布图" << "\n";
     cout << left << setw(37) << "2. 添加新的音响" << "|   " << "6. 保存当前方案"  << "\n";
@@ -84,50 +55,15 @@ void showCommandMenu() {
     cout << "请选择操作: ";
 }
 
-int getInput(const int &min_value, const int &max_value) {
-    string input;
-    //
-    getline(cin, input);
-    if (input.length() > 9 || input.empty()) {
-        return -1;
-    }
-    for (char c : input) {
-        if (c < '0' || c > '9') {
-            return -1;
-        }
-    }
-    int value = stoi(input);
-    if(value > max_value || value < min_value) {
-        return -1;
-    }
-    return value;
-}
-
-int askQuestion(const int &min_value, const int &max_value, const string& question) {
-    int ans = -1;
-    while(true){
-        cout << question;
-        ans = getInput(min_value, max_value);
-        if (ans == -1) {
-            cout << "输入无效，请重新输入合法的正整数，按任意键继续...\n";
-            system("pause > nul");
-            clearAboveLines(2);
-            continue;
-        }
-        else {
-            return ans;
-        }
-    }
-}
-
+// 功能1
 void setFieldSize() {
     cout << "您正在设置场地大小...\n";
-    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
     field.setWidth(askQuestion(1,10000, "请输入场地左右宽度(米): "));
     field.setLength(askQuestion(1,10000, "请输入场地上下宽度(米): "));
     cout << "场地大小设置成功！\n";
 }
-
+// 功能2
 void addSpeaker() {
     if (field.getWidth() == 0 || field.getLength() == 0) {
         cout << "请先设置场地大小！\n";
@@ -137,21 +73,21 @@ void addSpeaker() {
     int x, y, decibel;
     cout << "您正在添加新的音响，这是第" << speakers.size() + 1 << "号音箱...\n";
     cout << "请输入音响位置(x,y) " << "(范围: 0 ~ " << field.getWidth() << " , 0 ~ " << field.getLength() << " )\n";
-    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
     newSpeaker.setX(askQuestion(0,field.getWidth(), "请输入音响位置x坐标: "));
     newSpeaker.setY(askQuestion(0,field.getLength(), "请输入音响位置y坐标: "));
     newSpeaker.setDecibel(askQuestion(0,200, "请输入音响输出的平均分贝值: "));
     speakers.push_back(newSpeaker);
     cout << "音响添加成功！\n";
 }
-
+// 功能3
 void modifySpeaker() {
     if(speakers.empty()) {
         cout << "当前没有音响，无法修改参数。\n";
         return;
     }
     int index = 0;
-    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
     index = askQuestion(1, speakers.size(), "请输入要修改参数的音响序号: ");
     cout << "请输入音响位置(x,y) " << "(范围: 0 ~ " << field.getWidth() << " , 0 ~ " << field.getLength() << " )\n";
     speakers[index - 1].setX(askQuestion(0,field.getWidth(), "请输入音响位置x坐标: "));
@@ -159,19 +95,19 @@ void modifySpeaker() {
     speakers[index - 1].setDecibel(askQuestion(0,200, "请输入音响输出的平均分贝值: "));
     cout << "音响参数修改成功！\n";
 }
-
+// 功能4
 void deleteSpeaker() {
     if(speakers.empty()) {
         cout << "当前没有音响，无法删除。\n";
         return;
     }
     int index;
-    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
     index = askQuestion(1, speakers.size(), "请输入要删除的音响序号: ");
     speakers.erase(speakers.begin() + index - 1);
     cout << "音响删除成功！\n";
 }
-
+// 功能5
 void openMap(){
     static bool isMapConsoleOpen = false;
     if (!isMapConsoleOpen) {
@@ -186,22 +122,23 @@ void openMap(){
     cout << "正在打开分贝分布图，按任意键继续...\n";
     system("pause > nul");
     system("start \"\" \"ShowMap.exe\"");
+    clearConsoleBelow(5);
 }
-
+// 功能6
 void storeSolution() {
-    setData("output/solution.txt");
-    cout << "您方案已保存在“output/solution.txt”当中，按任意键继续...\n";
+    saveDataToFile("output/solution.txt");
+    cout << "您方案已保存在“output/solution.txt”中 按任意键继续...\n";
     system("pause > nul");
-    clearAboveLines(1);
+    clearConsoleBelow(5);
 }
-
+// 功能7
 void readSolution() {
     string inputPath = "output/solution.txt";
-    std::ifstream inFile(inputPath);
+    ifstream inFile(inputPath);
     if (!inFile) {
         cout << "读取错误，暂无储存方案，按任意键继续...\n";
         system("pause > nul");
-        clearAboveLines(1);
+        clearConsoleBelow(5);
         return;
     }
     int width, length;
@@ -227,76 +164,24 @@ void readSolution() {
         speakers.emplace_back(x, y, decibel);
     }
     inFile.close();
-    setData("output/data.txt");
+    saveDataToFile("output/data.txt");
     cout << "方案已读取，按任意键继续...\n";
     system("pause > nul");
     clearConsoleBelow(5);
 }
-
+// 功能8
 void exitProgram() {
     cout << "正在退出程序...\n";
     if (system("tasklist /FI \"IMAGENAME eq ShowMap.exe\" 2>NUL | find /I \"ShowMap.exe\" >NUL") == 0) {
         system("taskkill /IM ShowMap.exe /F > nul 2>&1");
     }  
-    std::ofstream outFile("output/data.txt", std::ios::trunc);
+    ofstream outFile("output/data.txt", ios::trunc);
     outFile.close();
 }
-
-// 主菜单逻辑已经实现储存逻辑，在考虑要不要实现多个文件储存，选择某个读取的逻辑
-void menuLogic() {
-    showTitle();
-    int choice;
-    do {
-        showCommandMenu();
-        string str_choice;
-        cin >> str_choice;
-        if (str_choice.length() > 1 || str_choice.empty()) {
-            choice = -1;
-        } else {
-            choice = str_choice[0] - '0';
-        }
-        switch (choice) {
-            case 1:
-                setFieldSize();
-                updateData();
-                break;
-            case 2:
-                addSpeaker();
-                updateData();
-                break;
-            case 3:
-                modifySpeaker();
-                updateData();
-                break;
-            case 4:
-                deleteSpeaker();
-                updateData();
-                break;
-            case 5: 
-                openMap();
-                clearConsoleBelow(5);
-                break;
-            case 6:
-                storeSolution();
-                break;
-            case 7:
-                readSolution();
-                break;
-            case 8:
-                exitProgram();
-                break;
-            default:
-                cout << "无效的选择，请重新选择。\n";
-                cout << "按任意键继续...\n";
-                system("pause > nul");
-                clearConsoleBelow(5);
-        }
-    } while (choice != 8);
-}
-
-int main(){
-    SetConsoleOutputCP(CP_UTF8);
-    _mkdir("output");
-    menuLogic();
-    return 0;
+// 选择错误
+void invalidInput() {
+    cout << "无效的选择，请重新选择。\n";
+    cout << "按任意键继续...\n";
+    system("pause > nul");
+    clearConsoleBelow(5);
 }

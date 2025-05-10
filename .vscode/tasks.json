@@ -2,7 +2,7 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Build ShowMenu",
+            "label": "Build SystemEntrance",
             "type": "shell",
             "command": "g++",
             "args": [
@@ -10,9 +10,11 @@
                 "-mconsole",
                 "-I",
                 "./Public_Class",
-                "Front_End/ShowMenu.cpp",
+                "Front_End/CheckInput.cpp",
+                "Front_End/MenuFunction.cpp",
+                "Front_End/SystemEntrance.cpp",
                 "-o",
-                "Output/ShowMenu.exe"
+                "Output/SystemEntrance.exe"
             ],
             "group": {
                 "kind": "build",
@@ -21,23 +23,7 @@
             "problemMatcher": [
                 "$gcc"
             ],
-            "detail": "编译 ShowMenu.cpp 并生成可执行文件"
-        },
-        {
-            "label": "Run ShowMenu",
-            "type": "shell",
-            "command": "Output/ShowMenu.exe",
-            "group": {
-                "kind": "test",
-                "isDefault": true
-            },
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared"
-            },
-            "detail": "运行生成的 ShowMenu.exe"
+            "detail": "编译 SystemEntrance.cpp 并生成可执行文件"
         },
         {
             "label": "Build ShowMap",
@@ -61,21 +47,5 @@
             ],
             "detail": "编译 ShowMap.cpp 并生成可执行文件"
         },
-        {
-            "label": "Run ShowMap",
-            "type": "shell",
-            "command": "Output/ShowMap.exe",
-            "group": {
-                "kind": "test",
-                "isDefault": false
-            },
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared"
-            },
-            "detail": "运行生成的 ShowMap.exe"
-        }
     ]
 }

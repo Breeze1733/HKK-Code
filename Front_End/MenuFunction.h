@@ -1,5 +1,5 @@
-#ifndef SHOWMENU_H
-#define SHOWMENU_H
+#ifndef MenuFunction_H
+#define MenuFunction_H
 
 #include "../Public_Class/Field.h"
 #include "../Public_Class/Speaker.h"
@@ -19,24 +19,25 @@ using std::setw;
 using std::left;
 using std::setfill;
 using std::to_string;
-void clearConsoleBelow(int);
-void clearAboveLines(int);
-void setData(const string &);
-void getData(const string &);
+using std::ios;
+using std::ifstream;
+using std::ofstream;
+using std::numeric_limits;
+using std::streamsize;
+
+void saveDataToFile(const string &);
 void updateData();
-void showTitle();
-void showData();
+
 void showCommandMenu();
-int getInput(const int &, const int &);
-int askQuestion(const int &, const int &, const string&);
+
 void setFieldSize();
 void addSpeaker();
 void modifySpeaker();
 void deleteSpeaker();
 void openMap();
-void menuLogic();
-
-
+void storeSolution();
+void readSolution();
 void exitProgram();
+void invalidInput();
 
-#endif // SHOWMENU_H
+#endif // MenuFunction_H

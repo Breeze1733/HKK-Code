@@ -1,9 +1,6 @@
 #ifndef SPEAKER_H
 #define SPEAKER_H
 
-#include <string>
-using std::string;
-
 class Speaker {
     private:
         int x;

@@ -6,6 +6,7 @@
 #include <iostream>
 #include <iomanip>
 #include <vector>
+#include <limits>
 #include <windows.h> 
 #include <fstream>
 #include <direct.h>
@@ -17,14 +18,18 @@ using std::endl;
 using std::setw;
 using std::left;
 using std::setfill;
+using std::to_string;
 void clearConsoleBelow(int);
 void clearAboveLines(int);
+void setData();
+void updateData();
 void showTitle();
 void showData();
-void showMenu();
+void showCommandMenu();
 void setFieldSize();
 void addSpeaker();
-void setData();
+void modifySpeaker();
+void deleteSpeaker();
 void openMap();
 void menuLogic();
 

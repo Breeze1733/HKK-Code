@@ -4,6 +4,8 @@
         "iostream": "cpp",
         "iomanip": "cpp",
         "vector": "cpp",
-        "limits": "cpp"
+        "string_view": "cpp",
+        "limits": "cpp",
+        "fstream": "cpp"
     }
 }

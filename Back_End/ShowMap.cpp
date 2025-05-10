@@ -60,25 +60,32 @@ bool isSpeakerAt(int x, int y) {
 double sumDecibelAt(int x, int y) {
     double totalPower = 0.0;
     constexpr double minDbContribution = 1.0; // 小于此分贝则不计入
+    constexpr double powerDivisor = 5.0;      // 经验值：额定功率/5为平均工作功率
+
     for (const auto& sp : speakers) {
         double dx = x - sp.getX();
         double dy = y - sp.getY();
-        double r = sqrt(dx*dx + dy*dy);
-        double dB_source = sp.getRatedPower();
+        double r = sqrt(dx * dx + dy * dy);
 
+        double avgPower = sp.getRatedPower() / powerDivisor;
+        if (avgPower <= 0) continue; // 避免无效功率
+
+        // 1米处声压级
+        double dB_1m = sp.getSensitivity() + 10.0 * log10(avgPower);
+
+        // r米处声压级
         double dB_at_point;
         if (r < 1e-6) {
-            dB_at_point = dB_source; // 同位置
+            dB_at_point = dB_1m;
         } else {
-            dB_at_point = dB_source - 20.0 * log10(r);
+            dB_at_point = dB_1m - 20.0 * log10(r);
         }
 
         if (dB_at_point < minDbContribution)
             continue;
-        // 分贝转功率比
         totalPower += pow(10.0, dB_at_point / 10.0);
     }
-    if (totalPower < 1e-12) return 0.0; // 全都太远
+    if (totalPower < 1e-12) return 0.0;
     return 10.0 * log10(totalPower);
 }
 

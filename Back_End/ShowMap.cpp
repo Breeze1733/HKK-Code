@@ -22,6 +22,17 @@ void setConsoleColor(int color) {
     SetConsoleTextAttribute(hConsole, color);
 }
 
+// 设置控制台字体宽高比为正方形
+void setConsoleFontSquare(int fontWidth = 16, int fontHeight = 16) {
+    HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_FONT_INFOEX cfi = { sizeof(CONSOLE_FONT_INFOEX) };
+    GetCurrentConsoleFontEx(hOut, FALSE, &cfi);
+    wcscpy_s(cfi.FaceName, L"Consolas"); // 推荐等宽字体
+    cfi.dwFontSize.X = fontWidth;
+    cfi.dwFontSize.Y = fontHeight;
+    SetCurrentConsoleFontEx(hOut, FALSE, &cfi);
+}
+
 // 需要迁移的数据
 Field field(0, 0); // 初始化场地大小
 vector<Speaker> speakers; // 存储音响对象的结构
@@ -175,6 +186,7 @@ void showMap(const DecibelThreshold& thres) {
 
 int main() {
     SetConsoleOutputCP(CP_UTF8);
+    setConsoleFontSquare(16, 16); // 新增：设置字符为正方形
 
     // 推荐阈值
     DecibelThreshold thres(100.0, 93.0, 85.0);

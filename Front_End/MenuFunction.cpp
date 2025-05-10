@@ -37,7 +37,7 @@ void showMenu() {
         cout << "当前没有音响。\n";
     } else {
         cout << "┌────────┬─────────────────┬────────────┬────────────┐\n";
-        cout << "│ 序号   │ 坐标            │ 灵敏度     │ 平均功率   │\n";
+        cout << "│ 序号   │ 坐标            │ 灵敏度     │ 额定功率   │\n";
         cout << "├────────┼─────────────────┼────────────┼────────────┤\n";
         for (size_t i = 0; i < speakers.size(); ++i) {
             string location = "(" + to_string(speakers[i].getX()) + ", " + to_string(speakers[i].getY()) + ")";
@@ -80,7 +80,7 @@ void addSpeaker() {
     newSpeaker.setX(askQuestion(0,field.getWidth(), "请输入x坐标: "));
     newSpeaker.setY(askQuestion(0,field.getLength(), "请输入y坐标: "));
     newSpeaker.setSensitivity(askQuestion(50,150, "请输入音响的灵敏度(范围: 50 ~ 150)(dB/W/m): "));
-    newSpeaker.setRatedPower(askQuestion(0,1000, "请输入音响的平均功率(W): "));
+    newSpeaker.setRatedPower(askQuestion(0,1000, "请输入音响的额定功率(W): "));
     speakers.push_back(newSpeaker);
     cout << "音响添加成功！\n";
     updateData();
@@ -98,7 +98,7 @@ void modifySpeaker() {
     speakers[index - 1].setX(askQuestion(0,field.getWidth(), "请输入x坐标: "));
     speakers[index - 1].setY(askQuestion(0,field.getLength(), "请输入y坐标: "));
     speakers[index - 1].setSensitivity(askQuestion(50,150, "请输入音响的新灵敏度(范围: 50 ~ 150)(dB/W/m): "));
-    speakers[index - 1].setRatedPower(askQuestion(0,1000, "请输入音响的新平均功率(W): "));
+    speakers[index - 1].setRatedPower(askQuestion(0,1000, "请输入音响的新额定功率(W): "));
     cout << "音响参数修改成功！\n";
     updateData();
 }

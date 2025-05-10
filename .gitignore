@@ -1,8 +1,0 @@
-# Visual Studio 工作区文件
-.vs/
-
-# 其他需要忽略的规则（可选添加）
-*.user
-*.suo
-*.userosscache
-*.sln.docstates

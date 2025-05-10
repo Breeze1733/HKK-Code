@@ -120,7 +120,7 @@ void getData() {
 
 // 更新分贝分布图数据
 void updateMapData(const DecibelThreshold& thres) {
-    system("cls");
+    // 不再清屏，直接输出
     showMap(thres);
 }
 

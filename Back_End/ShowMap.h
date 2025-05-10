@@ -19,7 +19,7 @@ struct DecibelThreshold {
     double over;
     double good;
     double low;
-    DecibelThreshold(double o = 80.0, double g = 60.0, double l = 40.0)
+    DecibelThreshold(double o = 100.0, double g = 80.0, double l = 65.0)
         : over(o), good(g), low(l) {}
 };
 

@@ -1,5 +1,4 @@
 #include "MenuFunction.h"
-#include "CheckInput.h"
 
 Field field(0, 0);
 vector<Speaker> speakers;
@@ -28,8 +27,8 @@ void updateData(){
     clearConsoleBelow(5);
 }
 
-// 功能菜单
-void showCommandMenu() {
+// 数据展示与功能菜单
+void showMenu() {
     cout << "设定场地大小: " << field.getWidth() << " 米 x " << field.getLength() << " 米\n";
     cout << "音响数量: " << speakers.size() << "\n";
     cout << "音响列表:\n";
@@ -62,6 +61,7 @@ void setFieldSize() {
     field.setWidth(askQuestion(1,10000, "请输入场地左右宽度(米): "));
     field.setLength(askQuestion(1,10000, "请输入场地上下宽度(米): "));
     cout << "场地大小设置成功！\n";
+    updateData();
 }
 // 功能2
 void addSpeaker() {
@@ -79,6 +79,7 @@ void addSpeaker() {
     newSpeaker.setDecibel(askQuestion(0,200, "请输入音响输出的平均分贝值: "));
     speakers.push_back(newSpeaker);
     cout << "音响添加成功！\n";
+    updateData();
 }
 // 功能3
 void modifySpeaker() {
@@ -94,6 +95,7 @@ void modifySpeaker() {
     speakers[index - 1].setY(askQuestion(0,field.getLength(), "请输入音响位置y坐标: "));
     speakers[index - 1].setDecibel(askQuestion(0,200, "请输入音响输出的平均分贝值: "));
     cout << "音响参数修改成功！\n";
+    updateData();
 }
 // 功能4
 void deleteSpeaker() {
@@ -106,6 +108,7 @@ void deleteSpeaker() {
     index = askQuestion(1, speakers.size(), "请输入要删除的音响序号: ");
     speakers.erase(speakers.begin() + index - 1);
     cout << "音响删除成功！\n";
+    updateData();
 }
 // 功能5
 void openMap(){

@@ -1,5 +1,4 @@
 #include "SystemEntrance.h"
-#include "MenuFunction.h"
 
 void showTitle() {
     cout << "================== 音响分贝模拟系统 ==================" << "\n";
@@ -15,7 +14,7 @@ void menuLogic() {
     showTitle();
     int choice;
     do {
-        showCommandMenu();
+        showMenu();
         string str_choice;
         cin >> str_choice;
         if (str_choice.length() > 1 || str_choice.empty()) {
@@ -26,19 +25,15 @@ void menuLogic() {
         switch (choice) {
             case 1:
                 setFieldSize();
-                updateData();
                 break;
             case 2:
                 addSpeaker();
-                updateData();
                 break;
             case 3:
                 modifySpeaker();
-                updateData();
                 break;
             case 4:
                 deleteSpeaker();
-                updateData();
                 break;
             case 5: 
                 openMap();

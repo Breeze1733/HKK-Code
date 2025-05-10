@@ -3,6 +3,7 @@
 
 #include "../Public_Class/Field.h"
 #include "../Public_Class/Speaker.h"
+#include "CheckInput.h"
 #include <iostream>
 #include <iomanip>
 #include <vector>
@@ -28,7 +29,7 @@ using std::streamsize;
 void saveDataToFile(const string &);
 void updateData();
 
-void showCommandMenu();
+void showMenu();
 
 void setFieldSize();
 void addSpeaker();

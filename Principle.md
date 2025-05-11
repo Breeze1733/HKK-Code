@@ -1,3 +1,7 @@
+https://blog.csdn.net/weixin_42929997/article/details/143598621?fromshare=blogdetail&sharetype=blogdetail&sharerId=143598621&sharerefer=PC&sharesource=Alwayger&sharefrom=from_link
+
+https://chuangshi.qq.com/read/43348102/10
+
 # 电声学音箱声压级（SPL）公式原理与推导
 
 ## 核心公式
@@ -332,3 +336,59 @@ DI(\theta) = DI_{max} - 20 \cdot \log_{10}(\cos\theta)
 | 抛物面反射器   | 100     | 20     | 15°×15°    | DI≈18.8dB                |
 
 ---
+
+## 常见音箱方向性修正模型的出处与分析
+
+### 1. 平滑方向性修正 `-20*log10((cosθ+1)/2)`
+
+**出处与应用：**
+- 该公式常见于音响工程实际应用和部分厂商的工程软件，用于模拟实际扬声器在主轴两侧的声能分布，使覆盖角外的声压级衰减更平滑。
+- 其本质是将余弦函数的取值范围从 `[-1,1]` 映射到 `[0,1]`，避免出现负值和无穷大，保证所有角度都有有限的声能输出。
+- 相关讨论和应用可见于：
+  - [StackExchange: Why use (cosθ+1)/2 for directivity?](https://dsp.stackexchange.com/questions/65157/why-use-cos-theta-1-2-for-directivity)
+  - 部分音响仿真软件（如EASE、CATT）在简化模型时也采用类似处理。
+
+**物理意义：**
+- θ=0°时，(cosθ+1)/2=1，主轴方向无衰减。
+- θ=90°时，(cosθ+1)/2=0.5，侧向为-6dB。
+- θ=180°时，(cosθ+1)/2=0，背向理论上为负无穷，但实际代码会做下限保护。
+- 适合全指向或宽指向性扬声器，让声场分布更自然、过渡更平滑。
+
+---
+
+### 2. 余弦幂模型（Cosine Power Model）
+
+**出处与应用：**
+- 这是声学领域的经典方向性模型，广泛见于教材和国际标准。
+- 主要参考文献：
+  - 《Sound System Engineering》第4版（Don Davis, Eugene Patronis）第8章
+  - [JBL Pro: Directivity Index and Q](https://jblpro.com/en/support/knowledge-base/2019-12-18-directivity-index-and-q)
+  - [AES E-Library: Loudspeaker Directivity Patterns](https://www.aes.org/e-lib/browse.cfm?elib=14194)
+- 公式为：  
+  $$
+  D(\theta) = \cos^n(\theta)
+  $$
+  其中 $n$ 由覆盖角决定，$n = \frac{\log(0.5)}{\log(\cos(\theta_{-6dB}))}$，$\theta_{-6dB}$为-6dB覆盖角一半。
+
+**物理意义：**
+- 该模型可以精确控制-6dB覆盖角，即在$\theta_{-6dB}$处声压级正好衰减6dB。
+- θ=0°时，cosθ=1，D(0)=1，主轴方向无衰减。
+- θ=θ_{-6dB}时，D=0.5，正好-6dB。
+- θ>θ_{-6dB}时，声压级继续递减，但不会突变为极小值，符合实际定向扬声器的极坐标响应。
+- 适合号角、线阵等定向性强的扬声器。
+
+---
+
+### 对比分析
+
+| 模型                        | 主要用途           | 数学特性                | 物理意义/适用场景           |
+|-----------------------------|--------------------|-------------------------|-----------------------------|
+| `-20*log10((cosθ+1)/2)`     | 平滑宽指向/全指向  | θ=0为0dB，θ=90°为-6dB   | 过渡平滑，适合宽指向音箱    |
+| 余弦幂模型（cos^nθ）        | 精确定向           | θ=0为0dB，θ=θ_{-6dB}为-6dB | 精确控制覆盖角，适合号角/线阵 |
+
+---
+
+**结论：**
+- 平滑修正适合需要自然过渡、宽指向的场合，简单易用。
+- 余弦幂模型更科学、可控，适合需要精确覆盖角的专业定向音箱。
+- 两者都比“覆盖角外直接为极小值”更科学，且有文献和工程应用支持。

@@ -51,12 +51,19 @@ double MapCalculator::getDecibelAt(int x, int y) const {
             double theta = atan2(dy, dx) * 180.0 / M_PI;
             double delta = fabs(theta - sp.getMainAxisOrientation());
             if (delta > 180.0) delta = 360.0 - delta;
-            if (delta <= coverage / 2.0) {
-                di = -20.0 * log10(std::max(cos(delta * M_PI / 180.0), 1e-6));
-            } else {
-                di = -100.0;
-            }
+            double thetaRad = delta * M_PI / 180.0;
+            // 平滑方向性修正（全角范围内递减）
+            double smoothCos = (cos(thetaRad) + 1.0) / 2.0;
+            if (smoothCos < 1e-6) smoothCos = 1e-6;
+            di = -20.0 * log10(smoothCos);
+            // 如果你想用余弦幂模型（更科学），可用如下代码替换上面三行：
+            // double edge = coverage / 2.0;
+            // double n = std::log(0.5) / std::log(std::cos(edge * M_PI / 180.0));
+            // double cosTheta = std::cos(thetaRad);
+            // if (cosTheta < 1e-6) cosTheta = 1e-6;
+            // di = n * 10.0 * std::log10(cosTheta);
         }
+        // 全指向时di=0
         double dB_1m = sp.getSensitivity_dBWm() + 10.0 * log10(avgPower) + di;
         double dB_at_point = (r < 1e-6) ? dB_1m : dB_1m - 20.0 * log10(r);
         if (dB_at_point < minDbContribution)

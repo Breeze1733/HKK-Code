@@ -68,18 +68,11 @@ double sumDecibelAt(int x, int y) {
         double r = sqrt(dx * dx + dy * dy);
 
         double avgPower = sp.getRatedPower() / powerDivisor;
-        if (avgPower <= 0) continue; // 避免无效功率
+        if (avgPower <= 0) continue;
 
-        // 1米处声压级
-        double dB_1m = sp.getSensitivity() + 10.0 * log10(avgPower);
-
-        // r米处声压级
-        double dB_at_point;
-        if (r < 1e-6) {
-            dB_at_point = dB_1m;
-        } else {
-            dB_at_point = dB_1m - 20.0 * log10(r);
-        }
+        // 用自动换算后的灵敏度
+        double dB_1m = sp.getSensitivity_dBWm() + 10.0 * log10(avgPower);
+        double dB_at_point = (r < 1e-6) ? dB_1m : dB_1m - 20.0 * log10(r);
 
         if (dB_at_point < minDbContribution)
             continue;

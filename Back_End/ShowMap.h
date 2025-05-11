@@ -1,5 +1,6 @@
 #include "../Public_Class/Field.h"
 #include "../Public_Class/Speaker.h"
+#include "MapCalculator.h"
 #include <iostream>
 #include <iomanip>
 #include <vector>
@@ -23,10 +24,12 @@ struct DecibelThreshold {
 };
 
 void setConsoleColor(int);
+void setConsoleFontSquare(int, int);
 void getData();
-void showMap(const DecibelThreshold& thres);
+void showMap(const MapCalculator&, const DecibelThreshold&, int linesPerPage);
 void updateMapData(const DecibelThreshold& thres);
 void setColorByDecibel(double dB, bool isSpeaker, const DecibelThreshold& thres);
 bool isSpeakerAt(int x, int y);
 double sumDecibelAt(int x, int y);
+void printUserTips(int linesPerPage);
 

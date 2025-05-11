@@ -35,6 +35,7 @@
                 "-I",
                 "./Public_Class",
                 "Back_End/ShowMap.cpp",
+                "Back_End/MapCalculator.cpp",
                 "-o",
                 "Output/ShowMap.exe"
             ],
@@ -46,6 +47,6 @@
                 "$gcc"
             ],
             "detail": "编译 ShowMap.cpp 并生成可执行文件"
-        },
+        }
     ]
 }

@@ -2,46 +2,62 @@
 #define SPEAKER_H
 
 #include <cmath>
-class Speaker {
-    private:
-        int x;
-        int y;       
-        int sensitivity;
-        int impedance;
-        int ratedPower; 
 
-        int coverageAngle;
-        int mainAxisOrientation;
-    public:
-        Speaker() : x(0), y(0), sensitivity(0), impedance(0), ratedPower(0), coverageAngle(0), mainAxisOrientation(0) {}
-        Speaker(int xPos, int yPos, int sens, int imp, int power, int angle, int orientation)
-            : x(xPos), y(yPos), sensitivity(sens), impedance(imp), ratedPower(power), coverageAngle(angle), mainAxisOrientation(orientation) {}
-        int getX() const { return x; }
-        void setX(int xPos) { x = xPos; }
-        int getY() const { return y; }
-        void setY(int yPos) { y = yPos; }
-        int getSensitivity() const { return sensitivity; }
-        void setSensitivity(int sens) { sensitivity = sens; }
-        int getImpedance() const { return impedance; }
-        void setImpedance(int imp) { impedance = imp; }
-        int getRatedPower() const { return ratedPower; }
-        void setRatedPower(int power) { ratedPower = power; }
-        double getSensitivity_dBWm() const {
-            if (impedance == 0) {
-                // 已是 dB/W/m
-                return sensitivity;
-            } else {
-                // dB/2.83V/m 转 dB/W/m
-                // dB(W/m) = dB(2.83V/m) - 10*log10(8/Z)
-                // 公式参考：https://www.audiosciencereview.com/forum/index.php?threads/speaker-sensitivity-db-w-m-vs-db-2-83v-m.51385/
-                return sensitivity - 10.0 * log10(8.0 / impedance);
-            }
+class Speaker {
+private:
+    int x;
+    int y;
+    int sensitivity;         // 灵敏度，整数，单位dB/W/m或dB/2.83V/m
+    int impedance;           // 阻抗，整数，单位Ω，0表示dB/W/m
+    int ratedPower;          // 额定功率，整数，单位W
+    int coverageAngle;       // 覆盖角，整数，单位度，0为全指向
+    int mainAxisOrientation; // 主轴朝向，整数，单位度
+
+public:
+    Speaker()
+        : x(0), y(0), sensitivity(0), impedance(0), ratedPower(0), coverageAngle(0), mainAxisOrientation(0) {}
+
+    Speaker(int xPos, int yPos, int sens, int imp, int power, int angle = 0, int orientation = 0)
+        : x(xPos), y(yPos), sensitivity(sens), impedance(imp), ratedPower(power),
+          coverageAngle(angle), mainAxisOrientation(orientation) {}
+
+    // 坐标
+    int getX() const { return x; }
+    void setX(int xPos) { x = xPos; }
+    int getY() const { return y; }
+    void setY(int yPos) { y = yPos; }
+
+    // 灵敏度
+    int getSensitivity() const { return sensitivity; }
+    void setSensitivity(int sens) { sensitivity = sens; }
+
+    // 阻抗
+    int getImpedance() const { return impedance; }
+    void setImpedance(int imp) { impedance = imp; }
+
+    // 额定功率
+    int getRatedPower() const { return ratedPower; }
+    void setRatedPower(int power) { ratedPower = power; }
+
+    // 覆盖角
+    int getCoverageAngle() const { return coverageAngle; }
+    void setCoverageAngle(int angle) { coverageAngle = angle; }
+
+    // 主轴朝向
+    int getMainAxisOrientation() const { return mainAxisOrientation; }
+    void setMainAxisOrientation(int orientation) { mainAxisOrientation = orientation; }
+
+    // 获取以dB/W/m为基准的灵敏度（返回double，因有对数运算）
+    double getSensitivity_dBWm() const {
+        if (impedance == 0) {
+            // 已是 dB/W/m
+            return static_cast<double>(sensitivity);
+        } else {
+            // dB/2.83V/m 转 dB/W/m
+            // dB(W/m) = dB(2.83V/m) - 10*log10(8/Z)
+            return static_cast<double>(sensitivity) - 10.0 * std::log10(8.0 / impedance);
         }
-        
-        int getCoverageAngle() const { return coverageAngle; }
-        void setCoverageAngle(int angle) { coverageAngle = angle; }
-        int getMainAxisOrientation() const { return mainAxisOrientation; }
-        void setMainAxisOrientation(int orientation) { mainAxisOrientation = orientation; }
+    }
 };
 
 #endif // SPEAKER_H

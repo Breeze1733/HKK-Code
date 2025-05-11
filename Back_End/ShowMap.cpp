@@ -8,6 +8,10 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <cmath>
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 // 控制台颜色说明：0=黑,1=蓝,2=绿,3=青,4=红,5=紫,6=黄,7=白,8=灰,9=浅蓝,10=浅绿,11=浅青,12=浅红,13=浅紫,14=浅黄,15=亮白
 
@@ -70,8 +74,26 @@ double sumDecibelAt(int x, int y) {
         double avgPower = sp.getRatedPower() / powerDivisor;
         if (avgPower <= 0) continue;
 
-        // 用自动换算后的灵敏度
-        double dB_1m = sp.getSensitivity_dBWm() + 10.0 * log10(avgPower);
+        // 方向性修正
+        double di = 0.0;
+        int coverage = sp.getCoverageAngle();
+        if (coverage > 0) {
+            // 计算点与主轴夹角（度）
+            double theta = atan2(dy, dx) * 180.0 / M_PI;
+            double delta = fabs(theta - sp.getMainAxisOrientation());
+            // 夹角归一化到[0,180]
+            if (delta > 180.0) delta = 360.0 - delta;
+            if (delta <= coverage / 2.0) {
+                // DI(θ) = -20*log10(cosθ)
+                di = -20.0 * log10(std::max(cos(delta * M_PI / 180.0), 1e-6));
+            } else {
+                // 超出覆盖角，极小值
+                di = -100.0;
+            }
+        }
+        // 全指向时di=0
+
+        double dB_1m = sp.getSensitivity_dBWm() + 10.0 * log10(avgPower) + di;
         double dB_at_point = (r < 1e-6) ? dB_1m : dB_1m - 20.0 * log10(r);
 
         if (dB_at_point < minDbContribution)

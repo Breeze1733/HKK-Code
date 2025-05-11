@@ -18,7 +18,6 @@ void clearAboveLines(const int & linesToClear) {
 
 int getInput(const int & min_value, const int & max_value) {
     string input;
-    //
     getline(cin, input);
     if (input.length() > 9 || input.empty()) {
         return -1;

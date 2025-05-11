@@ -114,14 +114,13 @@ void getData() {
     }
     speakers.clear();
     for (int i = 0; i < speakerCount; ++i) {
-        int x, y, sensitivity, ratedPower;
-        if (!(inFile >> x >> y >> sensitivity >> ratedPower)) {
+        int x, y, sensitivity, impedance, ratedPower;
+        if (!(inFile >> x >> y >> sensitivity >> impedance >> ratedPower)) {
             cout << "数据文件格式错误（音响参数）\n";
             return;
         }
-        speakers.emplace_back(x, y, sensitivity, ratedPower);
+        speakers.emplace_back(x, y, sensitivity, impedance, ratedPower);
     }
-
     inFile.close();
 }
 

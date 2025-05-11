@@ -15,7 +15,6 @@ using std::vector;
 using std::ifstream;
 using std::ofstream;
 
-void saveDataToFile(const string & outputPath, Field &field, vector<Speaker> &speakers);
 void storeDataToFile(const string & outputPath, Field &field, vector<Speaker> &speakers, vector<vector<int>> &type);
 void getDataFromFile(const string & inputPath, Field &field, vector<Speaker> &speakers, vector<vector<int>> &type);
 

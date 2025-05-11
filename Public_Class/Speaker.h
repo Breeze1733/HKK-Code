@@ -1,6 +1,7 @@
 #ifndef SPEAKER_H
 #define SPEAKER_H
 
+#include <cmath>
 class Speaker {
     private:
         int x;

@@ -15,8 +15,10 @@ void saveDataToFile(const string & outputPath) {
 
     outFile << speakers.size() << "\n";
     for (auto& speaker : speakers) {
-        outFile << speaker.getX() << " " << speaker.getY() << " " 
-                << speaker.getSensitivity() << " " << speaker.getRatedPower() << "\n";
+        outFile << speaker.getX() << " " << speaker.getY() << " "
+                << speaker.getSensitivity() << " "
+                << speaker.getImpedance() << " "
+                << speaker.getRatedPower() << "\n";
     }
 
     outFile.close();
@@ -36,19 +38,28 @@ void showMenu() {
     if (speakers.empty()) {
         cout << "当前没有音响。\n";
     } else {
-        cout << "┌────────┬─────────────────┬────────────┬────────────┐\n";
-        cout << "│ 序号   │ 坐标            │ 灵敏度     │ 额定功率   │\n";
-        cout << "├────────┼─────────────────┼────────────┼────────────┤\n";
+        cout << "┌──────┬────────────┬────────────┬───────┬──────────┐\n";
+        cout << "│ 序号 │ 坐标       │ 灵敏度     │ 阻抗  │ 额定功率 │\n";
+        cout << "├──────┼────────────┼────────────┼───────┼──────────┤\n";
         for (size_t i = 0; i < speakers.size(); ++i) {
             string location = "(" + to_string(speakers[i].getX()) + ", " + to_string(speakers[i].getY()) + ")";
-            string sensitivity = to_string(speakers[i].getSensitivity()) + " dB/W/m";
+            string sensitivity, impedance;
+            if(speakers[i].getImpedance()) {
+                sensitivity = to_string(speakers[i].getSensitivity()) + " V/m   ";
+                impedance = to_string(speakers[i].getImpedance()) + "Ω";
+            }
+            else {
+                sensitivity = to_string(speakers[i].getSensitivity()) + " dB/W/m";
+                impedance = "   ——";
+            }
             string power = to_string(speakers[i].getRatedPower()) + " W";
-            cout << "│ " << left << setw(6)  << i + 1       << " │ " 
-                         << left << setw(15) << location    << " │ " 
-                         << left << setw(10) << sensitivity << " │ "
-                         << left << setw(10) << power       << " │\n";
+            cout << "│ " << left << setw(4)  << i + 1       << " │ " 
+                         << left << setw(10) << location    << " │ " 
+                         << right << setw(10) << sensitivity << " │ "
+                         << right << setw(6) << impedance   << " │ "
+                         << right << setw(8) << power       << " │\n";
         }
-        cout << "└────────┴─────────────────┴────────────┴────────────┘\n";
+        cout << "└──────┴────────────┴────────────┴───────┴──────────┘\n";
     }
     cout << "功能菜单：" << "\n";
     cout << left << setw(37) << "1. 设置场地大小" << "|   " << "5. 打开分贝分布图" << "\n";
@@ -79,7 +90,14 @@ void addSpeaker() {
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
     newSpeaker.setX(askQuestion(0,field.getWidth(), "请输入x坐标: "));
     newSpeaker.setY(askQuestion(0,field.getLength(), "请输入y坐标: "));
-    newSpeaker.setSensitivity(askQuestion(50,150, "请输入音响的灵敏度(范围: 50 ~ 150)(dB/W/m): "));
+    int isImpedance = askQuestion(1,2,"请选择音响灵敏度的单位( 1.dB/W/m  2.V/m ): ");
+    if (isImpedance == 1) {
+        newSpeaker.setImpedance(0);
+        newSpeaker.setSensitivity(askQuestion(50,150, "请输入音响的灵敏度(范围: 50 ~ 150)(dB/W/m): "));
+    } else {
+        newSpeaker.setSensitivity(askQuestion(0,2000, "请输入音响的灵敏度(范围: 0 ~ 200)(V/m): "));
+        newSpeaker.setImpedance(askQuestion(1,1000, "请输入音响的阻抗(Ω): "));
+    }
     newSpeaker.setRatedPower(askQuestion(0,1000, "请输入音响的额定功率(W): "));
     speakers.push_back(newSpeaker);
     cout << "音响添加成功！\n";
@@ -97,7 +115,14 @@ void modifySpeaker() {
     cout << "请输入音响新位置(x,y) " << "(范围: 0 ~ " << field.getWidth() << " , 0 ~ " << field.getLength() << " )\n";
     speakers[index - 1].setX(askQuestion(0,field.getWidth(), "请输入x坐标: "));
     speakers[index - 1].setY(askQuestion(0,field.getLength(), "请输入y坐标: "));
-    speakers[index - 1].setSensitivity(askQuestion(50,150, "请输入音响的新灵敏度(范围: 50 ~ 150)(dB/W/m): "));
+    int isImpedance = askQuestion(1,2,"请选择音响灵敏度的单位( 1.dB/W/m  2.V/m ): ");
+    if (isImpedance == 1) {
+        speakers[index - 1].setImpedance(0);
+        speakers[index - 1].setSensitivity(askQuestion(50,150, "请输入音响的新灵敏度(范围: 50 ~ 150)(dB/W/m): "));
+    } else {
+        speakers[index - 1].setSensitivity(askQuestion(0,2000, "请输入音响的新灵敏度(范围: 0 ~ 200)(V/m): "));
+        speakers[index - 1].setImpedance(askQuestion(1,1000, "请输入音响的新阻抗(Ω): "));
+    }
     speakers[index - 1].setRatedPower(askQuestion(0,1000, "请输入音响的新额定功率(W): "));
     cout << "音响参数修改成功！\n";
     updateData();
@@ -163,12 +188,13 @@ void readSolution() {
     }
     speakers.clear();
     for (int i = 0; i < speakerCount; ++i) {
-        int x, y, sensitivity, ratedPower;
-        if (!(inFile >> x >> y >> sensitivity >> ratedPower)) {
+        int x, y, sensitivity, impedance, ratedPower;
+        if (!(inFile >> x >> y >> sensitivity >> impedance >> ratedPower)) {
             cout << "数据文件格式错误（音响参数）\n";
             return;
         }
-        speakers.emplace_back(x, y, sensitivity, ratedPower);
+        Speaker speaker(x, y, sensitivity, impedance, ratedPower);
+        speakers.push_back(speaker);
     }
     inFile.close();
     saveDataToFile("output/data.txt");

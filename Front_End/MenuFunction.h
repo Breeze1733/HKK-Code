@@ -18,6 +18,7 @@ using std::vector;
 using std::endl;
 using std::setw;
 using std::left;
+using std::right;
 using std::setfill;
 using std::to_string;
 using std::ios;

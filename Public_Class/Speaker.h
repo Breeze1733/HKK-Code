@@ -12,15 +12,19 @@ private:
     int ratedPower;          // 额定功率，整数，单位W
     int coverageAngle;       // 覆盖角，整数，单位度，0为全指向
     int mainAxisOrientation; // 主轴朝向，整数，单位度
-
+    int type;             // 音响类型，整数，1表示音响类型1，2表示音响类型2
 public:
     Speaker()
-        : x(0), y(0), sensitivity(0), impedance(0), ratedPower(0), coverageAngle(0), mainAxisOrientation(0) {}
+        : x(0), y(0), sensitivity(0), impedance(0), ratedPower(0), coverageAngle(0), mainAxisOrientation(0), type(0) {}
 
-    Speaker(int xPos, int yPos, int sens, int imp, int power, int angle = 0, int orientation = 0)
+    Speaker(int xPos, int yPos, int sens, int imp, int power, int angle, int orientation)
         : x(xPos), y(yPos), sensitivity(sens), impedance(imp), ratedPower(power),
-          coverageAngle(angle), mainAxisOrientation(orientation) {}
+          coverageAngle(angle), mainAxisOrientation(orientation), type(0) {}
 
+    Speaker(int xPos, int yPos, int sens, int imp, int power, int angle, int orientation, int type)
+        : x(xPos), y(yPos), sensitivity(sens), impedance(imp), ratedPower(power),
+          coverageAngle(angle), mainAxisOrientation(orientation), type(type) {}
+    
     // 坐标
     int getX() const { return x; }
     void setX(int xPos) { x = xPos; }
@@ -58,6 +62,10 @@ public:
             return static_cast<double>(sensitivity) - 10.0 * std::log10(8.0 / impedance);
         }
     }
+
+    // 音响类型
+    int getType() const { return type; }
+    void setType(int t) { type = t; }
 };
 
 #endif // SPEAKER_H

@@ -1,112 +1,90 @@
 #include "MenuFunction.h"
 
-Field field(0, 0);
-vector<Speaker> speakers;
-
-// 文件数据维护
-void saveDataToFile(const string & outputPath) {
-    std::ofstream outFile(outputPath);
-
-    if (!outFile) {
-        cout << "无法创建文件: " << outputPath << "\n";
-        return;
-    }
-    outFile << field.getWidth() << " " << field.getLength() << "\n";
-
-    outFile << speakers.size() << "\n";
-    for (auto& speaker : speakers) {
-        outFile << speaker.getX() << " " << speaker.getY() << " "
-                << speaker.getSensitivity() << " "
-                << speaker.getImpedance() << " "
-                << speaker.getRatedPower() << " "
-                << speaker.getCoverageAngle() << " "
-                << speaker.getMainAxisOrientation() << "\n";
-    }
-
-    outFile.close();
-}
-void updateData(){
-    saveDataToFile("output/data.txt");
-    cout << "数据已更新，按任意键继续...\n";
-    system("pause > nul");
-    clearConsoleBelow(5);
-}
-
-// 数据展示与功能菜单
-void showMenu() {
-    cout << "设定场地大小: " << field.getWidth() << " 米 x " << field.getLength() << " 米\n";
-    cout << "音响数量: " << speakers.size() << "\n";
-    cout << "音响列表:\n";
-    if (speakers.empty()) {
-        cout << "当前没有音响。\n";
-    } else {
-        cout << "┌──────┬────────────┬────────────┬───────┬──────────┐\n";
-        cout << "│ 序号 │ 坐标       │ 灵敏度     │ 阻抗  │ 额定功率 │\n";
-        cout << "├──────┼────────────┼────────────┼───────┼──────────┤\n";
-        for (size_t i = 0; i < speakers.size(); ++i) {
-            string location = "(" + to_string(speakers[i].getX()) + ", " + to_string(speakers[i].getY()) + ")";
-            string sensitivity, impedance;
-            if(speakers[i].getImpedance()) {
-                sensitivity = to_string(speakers[i].getSensitivity()) + " V/m   ";
-                impedance = to_string(speakers[i].getImpedance()) + "Ω";
-            }
-            else {
-                sensitivity = to_string(speakers[i].getSensitivity()) + " dB/W/m";
-                impedance = "   ——";
-            }
-            string power = to_string(speakers[i].getRatedPower()) + " W";
-            cout << "│ " << left << setw(4)  << i + 1       << " │ " 
-                         << left << setw(10) << location    << " │ " 
-                         << right << setw(10) << sensitivity << " │ "
-                         << right << setw(6) << impedance   << " │ "
-                         << right << setw(8) << power       << " │\n";
-        }
-        cout << "└──────┴────────────┴────────────┴───────┴──────────┘\n";
-    }
-    cout << "功能菜单：" << "\n";
-    cout << left << setw(37) << "1. 设置场地大小" << "|   " << "5. 打开分贝分布图" << "\n";
-    cout << left << setw(37) << "2. 添加新的音响" << "|   " << "6. 保存当前方案"  << "\n";
-    cout << left << setw(40) << "3. 修改现有音响的参数" << "|   " << "7. 读取保存的方案" << "\n";
-    cout << left << setw(37) << "4. 删除指定音响" << "|   " << "8. 退出程序"  << "\n";
-    cout << "请选择操作: ";
-}
-
-// 功能1
-void setFieldSize() {
+// 功能1 设置场地大小
+void setFieldSize(Field &field, vector<Speaker> &speakers) {
     cout << "您正在设置场地大小...\n";
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
     field.setWidth(askQuestion(1,10000, "请输入场地左右宽度(米): "));
     field.setLength(askQuestion(1,10000, "请输入场地上下宽度(米): "));
-    cout << "场地大小设置成功！\n";
-    updateData();
+    saveDataToFile("output/data.txt", field, speakers);
+    cout << "场地大小设置成功!按任意键继续...\n";
+    system("pause > nul");
 }
-// 功能2
-void addSpeaker() {
+// 功能2 添加新的音响类型
+void addSpeakerType(vector<vector<int>> &type) {
+    vector<int> newType(4,0);
+    cout << "您正在添加新的音响类型...\n";
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    int isOriented = askQuestion(1, 2, "请设置音响指向性( 1.全向音响  2.定向音箱 ): ");
+    if (isOriented == 2) {
+        newType[0] = askQuestion(0, 360, "请输入音响的水平覆盖角(范围: 0 ~ 360): ");
+    }
+    int isImpedance = askQuestion(1,2,"请选择音响灵敏度的单位( 1.dB/W/m  2.V/m ): ");
+    if (isImpedance == 1) {
+        newType[1] = askQuestion(50,150, "请输入音响的灵敏度(范围: 50 ~ 150)(dB/W/m): ");
+        newType[2] = 0;
+    } else {
+        newType[1] = askQuestion(0,2000, "请输入音响的灵敏度(范围: 0 ~ 200)(V/m): ");
+        newType[2] = askQuestion(1,1000, "请输入音响的阻抗(Ω): ");
+    }
+    newType[3] = askQuestion(0,1000, "请输入音响的额定功率(W): ");
+    type.push_back(newType);
+    cout << "音响类型添加成功!按任意键继续...\n";
+    system("pause > nul");
+}
+// 功能3 删除指定音响类型
+void deleteSpeakerType(Field &field, vector<Speaker> &speakers, vector<vector<int>> &type) {
+    if(type.empty()) {
+        cout << "当前没有音响类型，无法删除。\n";
+        return;
+    }
+    int index;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    index = askQuestion(1, type.size(), "请输入要删除的音响类型序号: ");
+    type.erase(type.begin() + index - 1);
+    for(size_t i = 0; i < speakers.size(); ++i) {
+        if (speakers[i].getType() == index) {
+            speakers.erase(speakers.begin() + i);
+            --i;
+        } else if (speakers[i].getType() > index) {
+            speakers[i].setType(speakers[i].getType() - 1);
+        }
+    }
+    saveDataToFile("output/data.txt", field, speakers);
+    cout << "音响类型" << index << "删除成功!按任意键继续...\n";
+    system("pause > nul");
+}
+// 功能4 摆放音响
+void addSpeaker(Field &field, vector<Speaker> &speakers, vector<vector<int>> &type) {
+    if (type.empty()) {
+        cout << "当前没有音响类型，无法添加音响。\n";
+        return;
+    }
     if (field.getWidth() == 0 || field.getLength() == 0) {
         cout << "请先设置场地大小！\n";
         return;
     }
     Speaker newSpeaker;
-    cout << "您正在添加新的音响，这是第" << speakers.size() + 1 << "号音箱...\n";
-    cout << "请输入音响位置(x,y) " << "(范围: 0 ~ " << field.getWidth() << " , 0 ~ " << field.getLength() << " )\n";
+    cout << "您正在摆放音响，这是第" << speakers.size() + 1 << "号音箱...\n";
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    newSpeaker.setType(askQuestion(1, type.size(), "请选择音响类型: "));
+    newSpeaker.setCoverageAngle(type[newSpeaker.getType() - 1][0]);
+    newSpeaker.setSensitivity(type[newSpeaker.getType() - 1][1]);
+    newSpeaker.setImpedance(type[newSpeaker.getType() - 1][2]);
+    newSpeaker.setRatedPower(type[newSpeaker.getType() - 1][3]);
+    cout << "请输入音响摆放的位置(x,y) " << "(范围: 0 ~ " << field.getWidth() << " , 0 ~ " << field.getLength() << " )\n";
     newSpeaker.setX(askQuestion(0,field.getWidth(), "请输入x坐标: "));
     newSpeaker.setY(askQuestion(0,field.getLength(), "请输入y坐标: "));
-    int isImpedance = askQuestion(1,2,"请选择音响灵敏度的单位( 1.dB/W/m  2.V/m ): ");
-    if (isImpedance == 1) {
-        newSpeaker.setImpedance(0);
-        newSpeaker.setSensitivity(askQuestion(50,150, "请输入音响的灵敏度(范围: 50 ~ 150)(dB/W/m): "));
-    } else {
-        newSpeaker.setSensitivity(askQuestion(0,2000, "请输入音响的灵敏度(范围: 0 ~ 200)(V/m): "));
-        newSpeaker.setImpedance(askQuestion(1,1000, "请输入音响的阻抗(Ω): "));
+    if(newSpeaker.getCoverageAngle()){
+        newSpeaker.setMainAxisOrientation(askQuestion(0, 360, "请输入音响的主轴朝向(范围: 0 ~ 360°): "));
     }
-    newSpeaker.setRatedPower(askQuestion(0,1000, "请输入音响的额定功率(W): "));
     speakers.push_back(newSpeaker);
-    cout << "音响添加成功！\n";
-    updateData();
+    saveDataToFile("output/data.txt", field, speakers);
+    cout << "音响摆放成功!按任意键继续...\n";
+    system("pause > nul");
 }
-// 功能3
-void modifySpeaker() {
+// 功能5 调整音箱位置与朝向
+void adjustSpeaker(Field &field, vector<Speaker> &speakers) {
     if(speakers.empty()) {
         cout << "当前没有音响，无法修改参数。\n";
         return;
@@ -114,23 +92,16 @@ void modifySpeaker() {
     int index = 0;
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
     index = askQuestion(1, speakers.size(), "请输入要修改参数的音响序号: ");
-    cout << "请输入音响新位置(x,y) " << "(范围: 0 ~ " << field.getWidth() << " , 0 ~ " << field.getLength() << " )\n";
+    cout << "请输入音响摆放的新位置(x,y) " << "(范围: 0 ~ " << field.getWidth() << " , 0 ~ " << field.getLength() << " )\n";
     speakers[index - 1].setX(askQuestion(0,field.getWidth(), "请输入x坐标: "));
     speakers[index - 1].setY(askQuestion(0,field.getLength(), "请输入y坐标: "));
-    int isImpedance = askQuestion(1,2,"请选择音响灵敏度的单位( 1.dB/W/m  2.V/m ): ");
-    if (isImpedance == 1) {
-        speakers[index - 1].setImpedance(0);
-        speakers[index - 1].setSensitivity(askQuestion(50,150, "请输入音响的新灵敏度(范围: 50 ~ 150)(dB/W/m): "));
-    } else {
-        speakers[index - 1].setSensitivity(askQuestion(0,2000, "请输入音响的新灵敏度(范围: 0 ~ 200)(V/m): "));
-        speakers[index - 1].setImpedance(askQuestion(1,1000, "请输入音响的新阻抗(Ω): "));
-    }
-    speakers[index - 1].setRatedPower(askQuestion(0,1000, "请输入音响的新额定功率(W): "));
-    cout << "音响参数修改成功！\n";
-    updateData();
+    speakers[index - 1].setMainAxisOrientation(askQuestion(0, 360, "请输入音响的主轴朝向(范围: 0 ~ 360): "));
+    saveDataToFile("output/data.txt", field, speakers);
+    cout << "第" << index << "号音响参数调整成功!按任意键继续...\n";
+    system("pause > nul");
 }
-// 功能4
-void deleteSpeaker() {
+// 功能6 删除音响
+void deleteSpeaker(Field &field, vector<Speaker> &speakers) {
     if(speakers.empty()) {
         cout << "当前没有音响，无法删除。\n";
         return;
@@ -139,11 +110,12 @@ void deleteSpeaker() {
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
     index = askQuestion(1, speakers.size(), "请输入要删除的音响序号: ");
     speakers.erase(speakers.begin() + index - 1);
-    cout << "音响删除成功！\n";
-    updateData();
+    saveDataToFile("output/data.txt", field, speakers);
+    cout << "第" << index << "号音响删除成功!按任意键继续...\n";
+    system("pause > nul");
 }
-// 功能5
-void openMap(){
+// 功能7 打开分贝分布图
+void openMap(Field &field, vector<Speaker> &speakers){
     static bool isMapConsoleOpen = false;
     if (!isMapConsoleOpen) {
         isMapConsoleOpen = true;
@@ -157,54 +129,25 @@ void openMap(){
     cout << "正在打开分贝分布图，按任意键继续...\n";
     system("pause > nul");
     system("start \"\" \"ShowMap.exe\"");
-    clearConsoleBelow(5);
 }
-// 功能6
-void storeSolution() {
-    saveDataToFile("output/solution.txt");
-    cout << "您方案已保存在“output/solution.txt”中 按任意键继续...\n";
+
+// 功能8 保存当前的方案
+void storeSolution(Field &field, vector<Speaker> &speakers, vector<vector<int>> &type) {
+    storeDataToFile("output/solution.txt", field, speakers, type);
+    cout << "您方案已保存在“output/solution.txt”中!按任意键继续...\n";
     system("pause > nul");
-    clearConsoleBelow(5);
 }
-// 功能7
-void readSolution() {
+
+// 功能9 读取保存的方案
+void readSolution(Field &field, vector<Speaker> &speakers, vector<vector<int>> &type) {
     string inputPath = "output/solution.txt";
-    ifstream inFile(inputPath);
-    if (!inFile) {
-        cout << "读取错误，暂无储存方案，按任意键继续...\n";
-        system("pause > nul");
-        clearConsoleBelow(5);
-        return;
-    }
-    int width, length;
-    if (!(inFile >> width >> length)) {
-        cout << "数据文件格式错误（场地大小）\n";
-        return;
-    }
-    field.setWidth(width);
-    field.setLength(length);
-    int speakerCount;
-    if (!(inFile >> speakerCount)) {
-        cout << "数据文件格式错误（音响数量）\n";
-        return;
-    }
-    speakers.clear();
-    for (int i = 0; i < speakerCount; ++i) {
-        int x, y, sensitivity, impedance, ratedPower, coverageAngle, mainAxisOrientation;
-        if (!(inFile >> x >> y >> sensitivity >> impedance >> ratedPower >> coverageAngle >> mainAxisOrientation)) {
-            cout << "数据文件格式错误（音响参数）\n";
-            return;
-        }
-        Speaker speaker(x, y, sensitivity, impedance, ratedPower, coverageAngle, mainAxisOrientation);
-        speakers.push_back(speaker);
-    }
-    inFile.close();
-    saveDataToFile("output/data.txt");
-    cout << "方案已读取，按任意键继续...\n";
+    getDataFromFile(inputPath, field, speakers, type);
+    saveDataToFile("output/data.txt", field, speakers);
+    cout << "按任意键继续...\n";
     system("pause > nul");
-    clearConsoleBelow(5);
 }
-// 功能8
+
+// 功能0
 void exitProgram() {
     cout << "正在退出程序...\n";
     if (system("tasklist /FI \"IMAGENAME eq ShowMap.exe\" 2>NUL | find /I \"ShowMap.exe\" >NUL") == 0) {
@@ -213,10 +156,10 @@ void exitProgram() {
     ofstream outFile("output/data.txt", ios::trunc);
     outFile.close();
 }
+
 // 选择错误
-void invalidInput() {
+void invalidChoice() {
     cout << "无效的选择，请重新选择。\n";
     cout << "按任意键继续...\n";
     system("pause > nul");
-    clearConsoleBelow(5);
 }

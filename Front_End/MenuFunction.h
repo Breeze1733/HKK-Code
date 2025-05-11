@@ -3,41 +3,36 @@
 
 #include "../Public_Class/Field.h"
 #include "../Public_Class/Speaker.h"
+#include "ManageData.h"
 #include "CheckInput.h"
 #include <iostream>
 #include <iomanip>
 #include <vector>
 #include <limits>
-#include <windows.h> 
-#include <fstream>
+#include <windows.h>
 #include <direct.h>
-using std::cout;
 using std::cin;
+using std::cout;
+using std::ios;
 using std::string;
 using std::vector;
-using std::endl;
+using std::streamsize;
+using std::numeric_limits;
 using std::setw;
 using std::left;
 using std::right;
-using std::setfill;
 using std::to_string;
-using std::ios;
-using std::ifstream;
-using std::ofstream;
-using std::numeric_limits;
-using std::streamsize;
 
-void saveDataToFile(const string &);
-void updateData();
-void showMenu();
-void setFieldSize();
-void addSpeaker();
-void modifySpeaker();
-void deleteSpeaker();
-void openMap();
-void storeSolution();
-void readSolution();
+void setFieldSize(Field &field, vector<Speaker> &speakers);
+void addSpeakerType(vector<vector<int>> &type);
+void deleteSpeakerType(Field &field, vector<Speaker> &speakers, vector<vector<int>> &type);
+void addSpeaker(Field &field, vector<Speaker> &speakers, vector<vector<int>> &type);
+void adjustSpeaker(Field &field, vector<Speaker> &speakers);
+void deleteSpeaker(Field &field, vector<Speaker> &speakers);
+void openMap(Field &field, vector<Speaker> &speakers);
+void storeSolution(Field &field, vector<Speaker> &speakers, vector<vector<int>> &type);
+void readSolution(Field &field, vector<Speaker> &speakers, vector<vector<int>> &type);
 void exitProgram();
-void invalidInput();
+void invalidChoice();
 
 #endif // MenuFunction_H

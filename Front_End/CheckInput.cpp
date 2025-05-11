@@ -1,8 +1,8 @@
 #include "CheckInput.h"
 
-void clearConsoleBelow(const int & linesToKeep) {
+void clearConsole() {
     // 将光标移动到指定行之后
-    cout << "\033[" << linesToKeep + 1 << ";1H"; // 移动光标到第 linesToKeep+1 行
+    cout << "\033[" << 7 << ";1H"; // 移动光标到第 linesToKeep+1 行
     // 清除从光标到屏幕底部的内容
     cout << "\033[J";
 }

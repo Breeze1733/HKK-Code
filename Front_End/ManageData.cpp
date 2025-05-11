@@ -1,0 +1,77 @@
+#include "ManageData.h"
+
+// 文件数据维护
+void saveDataToFile(const string & outputPath, Field &field, vector<Speaker> &speakers) {
+    ofstream outFile(outputPath);
+    if (!outFile) {
+        cout << "无法创建文件: " << outputPath << "\n";
+        return;
+    }
+    outFile << field.getWidth() << " " << field.getLength() << "\n";
+    outFile << speakers.size() << "\n";
+    for (auto& speaker : speakers) {
+        outFile << speaker.getX() << " " << speaker.getY() << " "
+                << speaker.getSensitivity() << " "
+                << speaker.getImpedance() << " "
+                << speaker.getRatedPower() << " "
+                << speaker.getCoverageAngle() << " "
+                << speaker.getMainAxisOrientation() << "\n";
+    }
+    outFile.close();
+}
+
+void storeDataToFile(const string & outputPath, Field &field, vector<Speaker> &speakers, vector<vector<int>> &type) {
+    ofstream outFile(outputPath);
+    if (!outFile) {
+        cout << "无法创建文件: " << outputPath << "\n";
+        return;
+    }
+    outFile << field.getWidth() << " " << field.getLength() << "\n";
+    outFile << speakers.size() << "\n";
+    for (auto& speaker : speakers) {
+        outFile << speaker.getX() << " " << speaker.getY() << " "
+                << speaker.getSensitivity() << " "
+                << speaker.getImpedance() << " "
+                << speaker.getRatedPower() << " "
+                << speaker.getCoverageAngle() << " "
+                << speaker.getMainAxisOrientation() << "\n";
+    }
+    outFile << type.size() << "\n";
+    for (auto& t : type) {
+        outFile << t[0] << " " << t[1] << " " << t[2] << " " << t[3] << "\n";
+    }
+    outFile.close();
+}
+
+void getDataFromFile(const string & inputPath, Field &field, vector<Speaker> &speakers, vector<vector<int>> &type) {
+    ifstream inFile(inputPath);
+    if (!inFile) {
+        cout << "读取错误，暂无储存方案，";
+        return;
+    }
+    int width, length;
+    inFile >> width >> length;
+    field.setWidth(width);
+    field.setLength(length);
+
+    int speakerCount;
+    inFile >> speakerCount;
+    speakers.clear();
+    for (int i = 0; i < speakerCount; ++i) {
+        int x, y, sensitivity, impedance, ratedPower, coverageAngle, mainAxisOrientation;
+        inFile >> x >> y >> sensitivity >> impedance >> ratedPower >> coverageAngle >> mainAxisOrientation;
+        Speaker speaker(x, y, sensitivity, impedance, ratedPower, coverageAngle, mainAxisOrientation);
+        speakers.push_back(speaker);
+    }
+
+    int typeCount;
+    inFile >> typeCount;
+    type.clear();
+    for (int i = 0; i < typeCount; ++i) {
+        vector<int> t(4);
+        inFile >> t[0] >> t[1] >> t[2] >> t[3];
+        type.push_back(t);
+    }
+    inFile.close();
+    cout << "方案已读取，";
+}

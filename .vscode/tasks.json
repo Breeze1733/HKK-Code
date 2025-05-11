@@ -11,6 +11,7 @@
                 "-I",
                 "./Public_Class",
                 "Front_End/CheckInput.cpp",
+                "Front_End/ManageData.cpp",
                 "Front_End/MenuFunction.cpp",
                 "Front_End/SystemEntrance.cpp",
                 "-o",

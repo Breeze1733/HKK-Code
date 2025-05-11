@@ -1,25 +1,5 @@
 #include "ManageData.h"
 
-// 文件数据维护
-void saveDataToFile(const string & outputPath, Field &field, vector<Speaker> &speakers) {
-    ofstream outFile(outputPath);
-    if (!outFile) {
-        cout << "无法创建文件: " << outputPath << "\n";
-        return;
-    }
-    outFile << field.getWidth() << " " << field.getLength() << "\n";
-    outFile << speakers.size() << "\n";
-    for (auto& speaker : speakers) {
-        outFile << speaker.getX() << " " << speaker.getY() << " "
-                << speaker.getSensitivity() << " "
-                << speaker.getImpedance() << " "
-                << speaker.getRatedPower() << " "
-                << speaker.getCoverageAngle() << " "
-                << speaker.getMainAxisOrientation() << "\n";
-    }
-    outFile.close();
-}
-
 void storeDataToFile(const string & outputPath, Field &field, vector<Speaker> &speakers, vector<vector<int>> &type) {
     ofstream outFile(outputPath);
     if (!outFile) {
@@ -36,6 +16,9 @@ void storeDataToFile(const string & outputPath, Field &field, vector<Speaker> &s
                 << speaker.getCoverageAngle() << " "
                 << speaker.getMainAxisOrientation() << "\n";
     }
+    for (auto& speaker : speakers) {outFile << speaker.getType() << " ";}
+    outFile << "\n";
+
     outFile << type.size() << "\n";
     for (auto& t : type) {
         outFile << t[0] << " " << t[1] << " " << t[2] << " " << t[3] << "\n";
@@ -62,6 +45,11 @@ void getDataFromFile(const string & inputPath, Field &field, vector<Speaker> &sp
         inFile >> x >> y >> sensitivity >> impedance >> ratedPower >> coverageAngle >> mainAxisOrientation;
         Speaker speaker(x, y, sensitivity, impedance, ratedPower, coverageAngle, mainAxisOrientation);
         speakers.push_back(speaker);
+    }
+    for (int i = 0; i < speakerCount; ++i) {
+        int ty;
+        inFile >> ty;
+        speakers[i].setType(ty);
     }
 
     int typeCount;

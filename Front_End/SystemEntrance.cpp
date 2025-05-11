@@ -7,7 +7,7 @@ void showTitle() {
     cout << "\033[32mの\033[0m音量偏小    " << "\033[33mの\033[0m音量适中    " 
          << "\033[35mの\033[0m音量偏大    " << "\033[31mの\033[0m音响位置    " << "\n";
     cout << "关于坐标: 坐标原点在地图左上角,向右为x轴正方向,向下为y轴正方向" << "\n";
-    cout << "关于朝向: 0°表示正右方,90°表示正上方,180°表示正左方,270°表示正下方" << "\n";
+    cout << "关于朝向: 0°表示正右,90°表示正上,180°表示正左,270°表示正下" << "\n";
     cout << "======================================================" << "\n";
 }
 
@@ -20,9 +20,9 @@ void showData(Field &field, vector<Speaker> &speakers, vector<vector<int>> &type
 
 void showType(vector<vector<int>> &type) {
     if (!type.empty()) {
-        cout << "┌────────┬────────────┬──────────────┬──────────┬────────────┐\n";
-        cout << "│ 类型   │ 水平覆盖角 │ 灵敏度       │ 阻抗     │ 额定功率   │\n";
-        cout << "├────────┼────────────┼──────────────┼──────────┼────────────┤\n";
+        cout << "┌────────┬────────────┬────────────────┬────────┬────────────┐\n";
+        cout << "│ 类型   │ 水平覆盖角 │ 灵敏度         │ 阻抗   │ 额定功率   │\n";
+        cout << "├────────┼────────────┼────────────────┼────────┼────────────┤\n";
         for (size_t i = 0; i < type.size(); ++i) {
             string coverageAngle, sensitivity, impedance;
             if (type[i][0] == 0) {
@@ -31,28 +31,28 @@ void showType(vector<vector<int>> &type) {
                 coverageAngle = to_string(type[i][0]) + "°";
             }
             if (type[i][2]) {
-                sensitivity = to_string(type[i][1]) + " V/m";
+                sensitivity = to_string(type[i][1]) + " dB/2.83V/m";
                 impedance = to_string(type[i][2]) + "Ω";
             } else {
-                sensitivity = to_string(type[i][1]) + " dB/W/m";
-                impedance = "——";
+                sensitivity = to_string(type[i][1]) + " dB/ W / m ";
+                impedance = "    ——";
             }
             string power = to_string(type[i][3]) + " W";
             cout << "│ " << left << setw(8)  << "类型" + to_string(i + 1)  << " │ " 
-                         << right << setw(10) << coverageAngle    << " │ " 
-                         << right << setw(12) << sensitivity      << " │ "
-                         << right << setw(8)  << impedance        << " │ "
+                         << right << setw(11) << coverageAngle    << " │ " 
+                         << right << setw(14) << sensitivity      << " │ "
+                         << right << setw(7)  << impedance        << " │ "
                          << right << setw(10) << power            << " │\n";
         }
-        cout << "└────────┴────────────┴──────────────┴──────────┴────────────┘\n";
+        cout << "└────────┴────────────┴────────────────┴────────┴────────────┘\n";
     }
 }
 
 void showDetail(Field &field, vector<Speaker> &speakers) {
     if (!speakers.empty()) {
-        cout << "┌──────┬──────────────┬────────────────────┬────────────┐\n";
-        cout << "│ 序号 │ 类型          │ 坐标              │ 主轴朝向   │\n";
-        cout << "├──────┼──────────────┼────────────────────┼────────────┤\n";
+        cout << "┌──────┬──────────┬────────────────────┬────────────┐\n";
+        cout << "│ 序号 │ 类型     │ 坐标               │ 主轴朝向   │\n";
+        cout << "├──────┼──────────┼────────────────────┼────────────┤\n";
         for (size_t i = 0; i < speakers.size(); ++i) {
             string type = "类型" + to_string(speakers[i].getType());
             string location = "(" + to_string(speakers[i].getX()) + ", " + to_string(speakers[i].getY()) + ")";
@@ -62,12 +62,12 @@ void showDetail(Field &field, vector<Speaker> &speakers) {
             } else {
                 orientation = to_string(speakers[i].getCoverageAngle()) + "°";
             }
-            cout << "│ " << right << setw(4)  << i + 1       << " │ " 
-                         << right << setw(12) << type            << " │ " 
-                         << right << setw(18) << location        << " │ "
-                         << right << setw(10) << orientation     << " │\n";
+            cout << "│ " << left  << setw(4)  << i + 1       << " │ " 
+                         << left  << setw(10) << type            << " │ " 
+                         << left  << setw(18) << location        << " │ "
+                         << right << setw(11) << orientation     << " │\n";
         }
-        cout << "└──────┴──────────────┴────────────────────┴────────────┘\n";
+        cout << "└──────┴──────────┴────────────────────┴────────────┘\n";
     }
 }
 
@@ -84,10 +84,10 @@ void showCommandMenu(Field &field, vector<Speaker> &speakers) {
 }
 
 void menuLogic(Field &field, vector<Speaker> &speakers, vector<vector<int>> &type) {
-    showTitle();
     int choice;
     do {
-        clearConsole();
+        system("cls");
+        showTitle();
         showData(field, speakers, type);
         showCommandMenu(field, speakers);
         string str_choice;
@@ -99,7 +99,7 @@ void menuLogic(Field &field, vector<Speaker> &speakers, vector<vector<int>> &typ
         }
         switch (choice) {
             case 1:
-                setFieldSize(field, speakers);
+                setFieldSize(field, speakers, type);
                 break;
             case 2:
                 addSpeakerType(type);
@@ -111,10 +111,10 @@ void menuLogic(Field &field, vector<Speaker> &speakers, vector<vector<int>> &typ
                 addSpeaker(field, speakers, type);
                 break;
             case 5:
-                adjustSpeaker(field, speakers);
+                adjustSpeaker(field, speakers, type);
                 break;
             case 6:
-                deleteSpeaker(field, speakers);
+                deleteSpeaker(field, speakers, type);
                 break;
             case 7: 
                 openMap(field, speakers);

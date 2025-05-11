@@ -23,12 +23,12 @@ using std::left;
 using std::right;
 using std::to_string;
 
-void setFieldSize(Field &field, vector<Speaker> &speakers);
+void setFieldSize(Field &field, vector<Speaker> &speakers, vector<vector<int>> &type);
 void addSpeakerType(vector<vector<int>> &type);
 void deleteSpeakerType(Field &field, vector<Speaker> &speakers, vector<vector<int>> &type);
 void addSpeaker(Field &field, vector<Speaker> &speakers, vector<vector<int>> &type);
-void adjustSpeaker(Field &field, vector<Speaker> &speakers);
-void deleteSpeaker(Field &field, vector<Speaker> &speakers);
+void adjustSpeaker(Field &field, vector<Speaker> &speakers, vector<vector<int>> &type);
+void deleteSpeaker(Field &field, vector<Speaker> &speakers, vector<vector<int>> &type);
 void openMap(Field &field, vector<Speaker> &speakers);
 void storeSolution(Field &field, vector<Speaker> &speakers, vector<vector<int>> &type);
 void readSolution(Field &field, vector<Speaker> &speakers, vector<vector<int>> &type);

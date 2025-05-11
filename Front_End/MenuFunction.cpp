@@ -18,7 +18,9 @@ void saveDataToFile(const string & outputPath) {
         outFile << speaker.getX() << " " << speaker.getY() << " "
                 << speaker.getSensitivity() << " "
                 << speaker.getImpedance() << " "
-                << speaker.getRatedPower() << "\n";
+                << speaker.getRatedPower() << " "
+                << speaker.getCoverageAngle() << " "
+                << speaker.getMainAxisOrientation() << "\n";
     }
 
     outFile.close();
@@ -188,12 +190,12 @@ void readSolution() {
     }
     speakers.clear();
     for (int i = 0; i < speakerCount; ++i) {
-        int x, y, sensitivity, impedance, ratedPower;
-        if (!(inFile >> x >> y >> sensitivity >> impedance >> ratedPower)) {
+        int x, y, sensitivity, impedance, ratedPower, coverageAngle, mainAxisOrientation;
+        if (!(inFile >> x >> y >> sensitivity >> impedance >> ratedPower >> coverageAngle >> mainAxisOrientation)) {
             cout << "数据文件格式错误（音响参数）\n";
             return;
         }
-        Speaker speaker(x, y, sensitivity, impedance, ratedPower);
+        Speaker speaker(x, y, sensitivity, impedance, ratedPower, coverageAngle, mainAxisOrientation);
         speakers.push_back(speaker);
     }
     inFile.close();

@@ -107,12 +107,13 @@ void getData() {
     }
     speakers.clear();
     for (int i = 0; i < speakerCount; ++i) {
-        int x, y, sensitivity, impedance, ratedPower;
-        if (!(inFile >> x >> y >> sensitivity >> impedance >> ratedPower)) {
+        int x, y, sensitivity, impedance, ratedPower,
+            coverageAngle, mainAxisOrientation;
+        if (!(inFile >> x >> y >> sensitivity >> impedance >> ratedPower >> coverageAngle >> mainAxisOrientation)) {
             cout << "数据文件格式错误（音响参数）\n";
             return;
         }
-        speakers.emplace_back(x, y, sensitivity, impedance, ratedPower);
+        speakers.emplace_back(x, y, sensitivity, impedance, ratedPower, coverageAngle, mainAxisOrientation);
     }
     inFile.close();
 }

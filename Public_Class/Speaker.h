@@ -9,10 +9,13 @@ class Speaker {
         int sensitivity;
         int impedance;
         int ratedPower; 
+
+        int coverageAngle;
+        int mainAxisOrientation;
     public:
-        Speaker() : x(0), y(0), sensitivity(0), impedance(0), ratedPower(0) {}
-        Speaker(int xPos, int yPos, int sens, int imp, int power) :
-                x(xPos), y(yPos), sensitivity(sens), impedance(imp), ratedPower(power) {}
+        Speaker() : x(0), y(0), sensitivity(0), impedance(0), ratedPower(0), coverageAngle(0), mainAxisOrientation(0) {}
+        Speaker(int xPos, int yPos, int sens, int imp, int power, int angle, int orientation)
+            : x(xPos), y(yPos), sensitivity(sens), impedance(imp), ratedPower(power), coverageAngle(angle), mainAxisOrientation(orientation) {}
         int getX() const { return x; }
         void setX(int xPos) { x = xPos; }
         int getY() const { return y; }
@@ -24,7 +27,7 @@ class Speaker {
         int getRatedPower() const { return ratedPower; }
         void setRatedPower(int power) { ratedPower = power; }
         double getSensitivity_dBWm() const {
-            if (impedance <= 0) {
+            if (impedance == 0) {
                 // 已是 dB/W/m
                 return sensitivity;
             } else {
@@ -34,6 +37,11 @@ class Speaker {
                 return sensitivity - 10.0 * log10(8.0 / impedance);
             }
         }
+        
+        int getCoverageAngle() const { return coverageAngle; }
+        void setCoverageAngle(int angle) { coverageAngle = angle; }
+        int getMainAxisOrientation() const { return mainAxisOrientation; }
+        void setMainAxisOrientation(int orientation) { mainAxisOrientation = orientation; }
 };
 
 #endif // SPEAKER_H

@@ -6,11 +6,13 @@
 #include <string>
 #include <cmath>
 
+// 设置控制台文本颜色
 void setConsoleColor(int color) {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole, color);
 }
 
+// 设置控制台字体为正方形
 void setConsoleFontSquare(int fontWidth = 16, int fontHeight = 16) {
     HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
     CONSOLE_FONT_INFOEX cfi = { sizeof(CONSOLE_FONT_INFOEX) };
@@ -21,6 +23,7 @@ void setConsoleFontSquare(int fontWidth = 16, int fontHeight = 16) {
     SetCurrentConsoleFontEx(hOut, FALSE, &cfi);
 }
 
+// 根据分贝设置颜色
 void setColorByDecibel(double dB, bool isSpeaker, const DecibelThreshold& thres) {
     if (isSpeaker) {
         setConsoleColor(13);
@@ -37,7 +40,8 @@ void setColorByDecibel(double dB, bool isSpeaker, const DecibelThreshold& thres)
     }
 }
 
-void showMap(const MapCalculator& model, const DecibelThreshold& thres, int linesPerPage, double freqHz, const std::string& freqLabel) {
+// 显示声压分布图
+void showMap(const MapCalculator& model, const DecibelThreshold& thres, double freqHz, const std::string& freqLabel) {
     int width = model.getWidth();
     int length = model.getLength();
     if (width <= 0 || length <= 0) {
@@ -45,7 +49,6 @@ void showMap(const MapCalculator& model, const DecibelThreshold& thres, int line
         return;
     }
     std::cout << "当前频率：" << freqLabel << "\n";
-    int lineCount = 0;
     for (int i = 0; i < length; ++i) {
         int lastColor = -1;
         std::string buffer;
@@ -70,14 +73,6 @@ void showMap(const MapCalculator& model, const DecibelThreshold& thres, int line
         }
         setConsoleColor(7);
         std::cout << "\n";
-        ++lineCount;
-        if (linesPerPage > 0 && lineCount >= linesPerPage) {
-            setConsoleColor(14);
-            std::cout << "按任意键继续..." << std::endl;
-            _getch();
-            system("cls");
-            lineCount = 0;
-        }
     }
     setConsoleColor(7);
 }
@@ -92,19 +87,25 @@ int main() {
     SetConsoleOutputCP(CP_UTF8);
     setConsoleFontSquare(16, 16);
 
-    DecibelThreshold thres(100.0, 93.0, 85.0);
-    int linesPerPage = 500;
-
-    std::cout << "【重要提示】\n";
-    std::cout << "即将依次展示三个频率下的声压分布图：\n";
-    std::cout << "1. 低频（500Hz）\n";
-    std::cout << "2. 中频（1kHz）\n";
-    std::cout << "3. 高频（8kHz）\n";
-    std::cout << "请将命令行窗口最大化（全屏）并将字体最小化以获得最佳体验。\n";
-    std::cout << "每按一次任意键切换到下一张图。\n";
+    setConsoleColor(14); // 亮黄色
+    std::cout << "╔════════════════════════════════════════════════════════════════════╗\n";
+    std::cout << "║                         【重要提示】                               ║\n";
+    std::cout << "╠════════════════════════════════════════════════════════════════════╣\n";
+    std::cout << "║ 本程序将依次展示三个频率下的声压分布图：                           ║\n";
+    std::cout << "║   1. 低频（500Hz）                                                 ║\n";
+    std::cout << "║   2. 中频（1kHz）                                                  ║\n";
+    std::cout << "║   3. 高频（8kHz）                                                  ║\n";
+    std::cout << "║                                                                    ║\n";
+    std::cout << "║ 建议：请将命令行窗口最大化，并将字体缩小以获得最佳体验。           ║\n";
+    std::cout << "║                                                                    ║\n";
+    std::cout << "║ 每按一次任意键切换到下一张图。                                     ║\n";
+    std::cout << "╚════════════════════════════════════════════════════════════════════╝\n";
     std::cout << "按任意键开始...\n";
+    setConsoleColor(7); // 恢复默认
     _getch();
     system("cls");
+
+    DecibelThreshold thres(100.0, 93.0, 85.0);
 
     MapCalculator model;
     if (!model.loadData("output/data.txt")) {
@@ -119,16 +120,18 @@ int main() {
         {8000, "高频（8kHz）"}
     };
 
-    for (const auto& f : freqs) {
-        showMap(model, thres, linesPerPage, f.freq, f.label);
+    for (size_t i = 0; i < freqs.size(); ++i) {
+        showMap(model, thres, freqs[i].freq, freqs[i].label);
         setConsoleColor(14);
-        std::cout << "按任意键切换到下一张图...\n";
+        if (i != freqs.size() - 1) {
+            std::cout << "按任意键切换到下一张图...\n";
+            _getch();
+            system("cls");
+        }
+        // 最后一张图显示完后，等待任意键退出（无提示）
+        std::cout<<"按任意键退出\n";
         _getch();
-        system("cls");
     }
-
     setConsoleColor(7);
-    std::cout << "全部频率展示完毕，按任意键退出。\n";
-    _getch();
     return 0;
 }

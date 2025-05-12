@@ -47,21 +47,20 @@ double MapCalculator::getDecibelAt(int x, int y) const {
         if (avgPower <= 0) continue;
         double di = 0.0;
         int coverage = sp.getCoverageAngle();
+        // 8kHz频率下的背后声压级地板
+        double minDb = -28.0; // 专业音箱8kHz极坐标主轴背后常见值
         if (coverage > 0) {
-            double theta = atan2(dy, dx) * 180.0 / M_PI;
+            double theta = atan2(-dy, dx) * 180.0 / M_PI;
+            if (theta < 0) theta += 360.0;
             double delta = fabs(theta - sp.getMainAxisOrientation());
             if (delta > 180.0) delta = 360.0 - delta;
             double thetaRad = delta * M_PI / 180.0;
-            // 平滑方向性修正（全角范围内递减）
-            double smoothCos = (cos(thetaRad) + 1.0) / 2.0;
-            if (smoothCos < 1e-6) smoothCos = 1e-6;
-            di = -20.0 * log10(smoothCos);
-            // 如果你想用余弦幂模型（更科学），可用如下代码替换上面三行：
-            // double edge = coverage / 2.0;
-            // double n = std::log(0.5) / std::log(std::cos(edge * M_PI / 180.0));
-            // double cosTheta = std::cos(thetaRad);
-            // if (cosTheta < 1e-6) cosTheta = 1e-6;
-            // di = n * 10.0 * std::log10(cosTheta);
+            double edge = coverage / 2.0;
+            double n = std::log(0.5) / std::log(std::cos(edge * M_PI / 180.0));
+            double cosTheta = std::cos(thetaRad);
+            if (cosTheta < 1e-6) cosTheta = 1e-6;
+            di = n * 10.0 * std::log10(cosTheta);
+            if (di < minDb) di = minDb;
         }
         // 全指向时di=0
         double dB_1m = sp.getSensitivity_dBWm() + 10.0 * log10(avgPower) + di;

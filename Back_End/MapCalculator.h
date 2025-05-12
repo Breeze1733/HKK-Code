@@ -14,6 +14,7 @@ public:
     MapCalculator();
     bool loadData(const std::string& path);
     double getDecibelAt(int x, int y) const;
+    double getDecibelAt(int x, int y, double freqHz) const;
     bool isSpeakerAt(int x, int y) const;
     int getWidth() const { return field.getWidth(); }
     int getLength() const { return field.getLength(); }

@@ -37,20 +37,21 @@ void setColorByDecibel(double dB, bool isSpeaker, const DecibelThreshold& thres)
     }
 }
 
-void showMap(const MapCalculator& model, const DecibelThreshold& thres, int linesPerPage) {
+void showMap(const MapCalculator& model, const DecibelThreshold& thres, int linesPerPage, double freqHz, const std::string& freqLabel) {
     int width = model.getWidth();
     int length = model.getLength();
     if (width <= 0 || length <= 0) {
         std::cout << "\n尚未设置场地大小\n";
         return;
     }
+    std::cout << "当前频率：" << freqLabel << "\n";
     int lineCount = 0;
     for (int i = 0; i < length; ++i) {
         int lastColor = -1;
         std::string buffer;
         for (int j = 0; j < width; ++j) {
             bool isSpeaker = model.isSpeakerAt(j, i);
-            double dB = model.getDecibelAt(j, i);
+            double dB = model.getDecibelAt(j, i, freqHz);
             int color = isSpeaker ? 13
                         : (dB >= thres.over ? 12
                         : (dB >= thres.good ? 14
@@ -93,7 +94,17 @@ int main() {
 
     DecibelThreshold thres(100.0, 93.0, 85.0);
     int linesPerPage = 500;
-    bool firstShow = true;
+
+    std::cout << "【重要提示】\n";
+    std::cout << "即将依次展示三个频率下的声压分布图：\n";
+    std::cout << "1. 低频（500Hz）\n";
+    std::cout << "2. 中频（1kHz）\n";
+    std::cout << "3. 高频（8kHz）\n";
+    std::cout << "请将命令行窗口最大化（全屏）并将字体最小化以获得最佳体验。\n";
+    std::cout << "每按一次任意键切换到下一张图。\n";
+    std::cout << "按任意键开始...\n";
+    _getch();
+    system("cls");
 
     MapCalculator model;
     if (!model.loadData("output/data.txt")) {
@@ -101,17 +112,23 @@ int main() {
         return 1;
     }
 
-    while (true) {
-        model.loadData("output/data.txt"); // 支持热加载
-        showMap(model, thres, linesPerPage);
-        if (firstShow) {
-            printUserTips(linesPerPage);
-            firstShow = false;
-        }
-        std::cout << "请输入指令（exit 或其他）：";
-        std::string str;
-        std::cin >> str;
-        if (str == "exit") break;
+    struct FreqInfo { double freq; std::string label; };
+    std::vector<FreqInfo> freqs = {
+        {500,  "低频（500Hz）"},
+        {1000, "中频（1kHz）"},
+        {8000, "高频（8kHz）"}
+    };
+
+    for (const auto& f : freqs) {
+        showMap(model, thres, linesPerPage, f.freq, f.label);
+        setConsoleColor(14);
+        std::cout << "按任意键切换到下一张图...\n";
+        _getch();
+        system("cls");
     }
+
+    setConsoleColor(7);
+    std::cout << "全部频率展示完毕，按任意键退出。\n";
+    _getch();
     return 0;
 }

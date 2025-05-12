@@ -39,7 +39,7 @@ public:
     int getImpedance() const { return impedance; }
     void setImpedance(int imp) { impedance = imp; }
 
-    // 额定功率
+    // 额定输出功率
     int getRatedPower() const { return ratedPower; }
     void setRatedPower(int power) { ratedPower = power; }
 

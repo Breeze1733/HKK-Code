@@ -17,17 +17,17 @@ void addSpeakerType(vector<vector<int>> &type) {
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
     int isOriented = askQuestion(1, 2, "请设置音响指向性( 1.全向音响  2.定向音箱 ): ");
     if (isOriented == 2) {
-        newType[0] = askQuestion(0, 360, "请输入音响的水平覆盖角(范围: 0 ~ 360): ");
+        newType[0] = askQuestion(0, 360, "请输入音响的水平覆盖角(范围: 0 ~ 360°): ");
     }
-    int isImpedance = askQuestion(1,2,"请选择音响灵敏度的单位( 1.dB/W/m  2.V/m ): ");
+    int isImpedance = askQuestion(1,2,"请选择音响灵敏度的单位( 1. dB/W/m  2. dB/2.83V/m ): ");
     if (isImpedance == 1) {
         newType[1] = askQuestion(50,150, "请输入音响的灵敏度(范围: 50 ~ 150)(dB/W/m): ");
         newType[2] = 0;
     } else {
         newType[1] = askQuestion(0,2000, "请输入音响的灵敏度(范围: 0 ~ 200)(dB/2.83V/m): ");
-        newType[2] = askQuestion(1,1000, "请输入音响的阻抗(Ω): ");
+        newType[2] = askQuestion(1,1000, "请输入音响的阻抗(单位:Ω): ");
     }
-    newType[3] = askQuestion(0,1000, "请输入音响的额定功率(W): ");
+    newType[3] = askQuestion(0,1000, "请输入音响的RMS功率(单位:W): ");
     type.push_back(newType);
     cout << "音响类型添加成功!按任意键继续...\n";
     system("pause > nul");

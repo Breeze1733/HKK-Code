@@ -22,7 +22,7 @@ void showData(Field &field, vector<Speaker> &speakers, vector<vector<int>> &type
 void showType(vector<vector<int>> &type) {
     if (!type.empty()) {
         cout << "┌────────┬────────────┬────────────────┬────────┬────────────┐\n";
-        cout << "│ 类型   │ 水平覆盖角 │ 灵敏度         │ 阻抗   │  RMS功率   │\n";
+        cout << "│ 类型   │ -6dB覆盖角 │ 灵敏度         │ 阻抗   │  RMS功率   │\n";
         cout << "├────────┼────────────┼────────────────┼────────┼────────────┤\n";
         for (size_t i = 0; i < type.size(); ++i) {
             string coverageAngle, sensitivity, impedance;

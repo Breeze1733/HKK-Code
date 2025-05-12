@@ -17,7 +17,7 @@ void addSpeakerType(vector<vector<int>> &type) {
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
     int isOriented = askQuestion(1, 2, "请设置音响指向性( 1.全向音响  2.定向音箱 ): ");
     if (isOriented == 2) {
-        newType[0] = askQuestion(0, 360, "请输入音响的水平覆盖角(范围: 0 ~ 360°): ");
+        newType[0] = askQuestion(0, 360, "请输入音响的-6dB覆盖角(范围: 0 ~ 360°): ");
     }
     int isImpedance = askQuestion(1,2,"请选择音响灵敏度的单位( 1. dB/W/m  2. dB/2.83V/m ): ");
     if (isImpedance == 1) {

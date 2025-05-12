@@ -3,9 +3,18 @@
 
 #include "../Public_Class/Field.h"
 #include "../Public_Class/Speaker.h"
+#include "DecibelThreshold.h"
 #include <vector>
 #include <string>
+#include <iostream>
+#include <fstream>
+#include <cmath>
+#include <algorithm>
 
+
+/**
+ * @brief 声压分布计算核心类
+ */
 class MapCalculator {
 private:
     Field field;

@@ -26,17 +26,17 @@ void setConsoleFontSquare(int fontWidth = 16, int fontHeight = 16) {
 // 根据分贝设置颜色
 void setColorByDecibel(double dB, bool isSpeaker, const DecibelThreshold& thres) {
     if (isSpeaker) {
-        setConsoleColor(13);
+        setConsoleColor(13); // 浅紫
         return;
     }
     if (dB >= thres.over) {
-        setConsoleColor(12);
+        setConsoleColor(12); // 浅红
     } else if (dB >= thres.good) {
-        setConsoleColor(14);
+        setConsoleColor(14); // 浅黄
     } else if (dB >= thres.low) {
-        setConsoleColor(8);
+        setConsoleColor(8);  // 灰
     } else {
-        setConsoleColor(7);
+        setConsoleColor(7);  // 白
     }
 }
 
@@ -101,7 +101,7 @@ int main() {
     std::cout << "║ 每按一次任意键切换到下一张图。                                           ║\n";
     std::cout << "╚══════════════════════════════════════════════════════════════════════════╝\n";
     std::cout << "按任意键开始...\n";
-    setConsoleColor(7); // 恢复默认
+    setConsoleColor(7);
     _getch();
     system("cls");
 
@@ -109,7 +109,7 @@ int main() {
 
     MapCalculator model;
     if (!model.loadData("output/data.txt")) {
-        std::cout << "数据加载失败！\n";
+        std::cout << "【错误】数据加载失败！\n";
         return 1;
     }
 

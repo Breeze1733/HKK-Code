@@ -7,7 +7,7 @@
 using std::cout;
 using std::cin;
 using std::string;
-void clearConsole();
+
 void clearAboveLines(const int & linesToClear);
 int getInput(const int & min_value, const int & max_value);
 int askQuestion(const int & min_value, const int & max_value, const string & question);

@@ -71,7 +71,7 @@ void addSpeaker(Field &field, vector<Speaker> &speakers, vector<vector<int>> &ty
     newSpeaker.setCoverageAngle(type[newSpeaker.getType() - 1][0]);
     newSpeaker.setSensitivity(type[newSpeaker.getType() - 1][1]);
     newSpeaker.setImpedance(type[newSpeaker.getType() - 1][2]);
-    newSpeaker.setRatedPower(type[newSpeaker.getType() - 1][3]);
+    newSpeaker.setRmsPower(type[newSpeaker.getType() - 1][3]);
     cout << "请输入音响摆放的位置(x,y) " << "(范围: 0 ~ " << field.getWidth() << " , 0 ~ " << field.getLength() << " )\n";
     newSpeaker.setX(askQuestion(0,field.getWidth(), "请输入x坐标: "));
     newSpeaker.setY(askQuestion(0,field.getLength(), "请输入y坐标: "));

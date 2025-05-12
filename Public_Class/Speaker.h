@@ -9,20 +9,20 @@ private:
     int y;
     int sensitivity;         // 灵敏度，整数，单位dB/W/m或dB/2.83V/m
     int impedance;           // 阻抗，整数，单位Ω，0表示dB/W/m
-    int ratedPower;          // 额定功率，整数，单位W
+    int rmsPower;            // RMS功率，整数，单位W
     int coverageAngle;       // 覆盖角，整数，单位度，0为全指向
     int mainAxisOrientation; // 主轴朝向，整数，单位度
-    int type;             // 音响类型，整数，1表示音响类型1，2表示音响类型2
+    int type;                // 音响类型，整数，1表示音响类型1，2表示音响类型2
 public:
     Speaker()
-        : x(0), y(0), sensitivity(0), impedance(0), ratedPower(0), coverageAngle(0), mainAxisOrientation(0), type(0) {}
+        : x(0), y(0), sensitivity(0), impedance(0), rmsPower(0), coverageAngle(0), mainAxisOrientation(0), type(0) {}
 
-    Speaker(int xPos, int yPos, int sens, int imp, int power, int angle, int orientation)
-        : x(xPos), y(yPos), sensitivity(sens), impedance(imp), ratedPower(power),
+    Speaker(int xPos, int yPos, int sens, int imp, int rms, int angle, int orientation)
+        : x(xPos), y(yPos), sensitivity(sens), impedance(imp), rmsPower(rms),
           coverageAngle(angle), mainAxisOrientation(orientation), type(0) {}
 
-    Speaker(int xPos, int yPos, int sens, int imp, int power, int angle, int orientation, int type)
-        : x(xPos), y(yPos), sensitivity(sens), impedance(imp), ratedPower(power),
+    Speaker(int xPos, int yPos, int sens, int imp, int rms, int angle, int orientation, int type)
+        : x(xPos), y(yPos), sensitivity(sens), impedance(imp), rmsPower(rms),
           coverageAngle(angle), mainAxisOrientation(orientation), type(type) {}
     
     // 坐标
@@ -39,9 +39,9 @@ public:
     int getImpedance() const { return impedance; }
     void setImpedance(int imp) { impedance = imp; }
 
-    // 额定输出功率
-    int getRatedPower() const { return ratedPower; }
-    void setRatedPower(int power) { ratedPower = power; }
+    // RMS功率
+    int getRmsPower() const { return rmsPower; }
+    void setRmsPower(int rms) { rmsPower = rms; }
 
     // 覆盖角
     int getCoverageAngle() const { return coverageAngle; }

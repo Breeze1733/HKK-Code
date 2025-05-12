@@ -12,7 +12,7 @@ void storeDataToFile(const string & outputPath, Field &field, vector<Speaker> &s
         outFile << speaker.getX() << " " << speaker.getY() << " "
                 << speaker.getSensitivity() << " "
                 << speaker.getImpedance() << " "
-                << speaker.getRatedPower() << " "
+                << speaker.getRmsPower() << " " // 保存
                 << speaker.getCoverageAngle() << " "
                 << speaker.getMainAxisOrientation() << "\n";
     }
@@ -41,9 +41,9 @@ void getDataFromFile(const string & inputPath, Field &field, vector<Speaker> &sp
     inFile >> speakerCount;
     speakers.clear();
     for (int i = 0; i < speakerCount; ++i) {
-        int x, y, sensitivity, impedance, ratedPower, coverageAngle, mainAxisOrientation;
-        inFile >> x >> y >> sensitivity >> impedance >> ratedPower >> coverageAngle >> mainAxisOrientation;
-        Speaker speaker(x, y, sensitivity, impedance, ratedPower, coverageAngle, mainAxisOrientation);
+        int x, y, sensitivity, impedance, rmsPower, coverageAngle, mainAxisOrientation;
+        inFile >> x >> y >> sensitivity >> impedance >> rmsPower >> coverageAngle >> mainAxisOrientation; // 读取
+        Speaker speaker(x, y, sensitivity, impedance, rmsPower, coverageAngle, mainAxisOrientation);
         speakers.push_back(speaker);
     }
     for (int i = 0; i < speakerCount; ++i) {

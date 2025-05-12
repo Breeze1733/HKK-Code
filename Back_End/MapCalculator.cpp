@@ -20,10 +20,10 @@ bool MapCalculator::loadData(const std::string& path) {
     if (!(inFile >> speakerCount)) return false;
     speakers.clear();
     for (int i = 0; i < speakerCount; ++i) {
-        int x, y, sensitivity, impedance, ratedPower, coverageAngle, mainAxisOrientation;
-        if (!(inFile >> x >> y >> sensitivity >> impedance >> ratedPower >> coverageAngle >> mainAxisOrientation))
+        int x, y, sensitivity, impedance, rmsPower, coverageAngle, mainAxisOrientation;
+        if (!(inFile >> x >> y >> sensitivity >> impedance >> rmsPower >> coverageAngle >> mainAxisOrientation))
             return false;
-        speakers.emplace_back(x, y, sensitivity, impedance, ratedPower, coverageAngle, mainAxisOrientation);
+        speakers.emplace_back(x, y, sensitivity, impedance, rmsPower, coverageAngle, mainAxisOrientation);
     }
     return true;
 }
@@ -43,7 +43,7 @@ double MapCalculator::getDecibelAt(int x, int y) const {
         double dx = x - sp.getX();
         double dy = y - sp.getY();
         double r = sqrt(dx * dx + dy * dy);
-        double avgPower = sp.getRatedPower() / powerDivisor;
+        double avgPower = sp.getRmsPower(); // 直接用RMS功率
         if (avgPower <= 0) continue;
         double di = 0.0;
         int coverage = sp.getCoverageAngle();

@@ -3,18 +3,18 @@
 void showTitle() {
     cout << "====================== 音响分贝模拟系统 ======================" << "\n";
     // 可以考虑在这里加入作者信息a
-    cout << left << setw(36) << "图例与注释:"                << "   ┌────────────────────→ x\n"   ;
-    cout << left << setw(45) << "\033[32mの\033[0m 音量偏小" << "   │       90°\n"          ;
-    cout << left << setw(45) << "\033[33mの\033[0m 音量适中" << "   │        ↑ \n"          ;
-    cout << left << setw(45) << "\033[31mの\033[0m 音量偏大" << "   │ 180° ← · → 0°(360°)\n" ;
-    cout << left << setw(45) << "\033[35mの\033[0m 音响位置" << "   │        ↓ \n"          ;
-    cout << left << setw(39) << "每个の表示1平方米"           << " y ↓       270°\n"         ;     
+    cout << left << setw(30) << "图例与注释:"           << "   (0,0)┌────────────────────→ x\n"   ;
+    cout << left << setw(44) << "\033[32mの\033[0m 音量偏小" << "   │       90°\n"          ;
+    cout << left << setw(44) << "\033[33mの\033[0m 音量适中" << "   │        ↑ \n"          ;
+    cout << left << setw(44) << "\033[31mの\033[0m 音量偏大" << "   │ 180° ← · → 0°(360°)\n" ;
+    cout << left << setw(44) << "\033[35mの\033[0m 音响位置" << "   │        ↓ \n"          ;
+    cout << left << setw(38) << "每个の表示1平方米"           << " y ↓       270°\n"         ;     
     cout << "==============================================================" << "\n";
 }
 
 void showData(Field &field, vector<Speaker> &speakers, vector<vector<int>> &type) {
     cout << "设定场地大小: " << field.getWidth() << " 米 x " << field.getLength() << " 米\n";
-    cout << "场上音响数量: " << speakers.size() << "个\n";
+    cout << "场上音响数量: " << speakers.size() << " 个\n";
     showType(type);
     showDetail(field, speakers);
 }

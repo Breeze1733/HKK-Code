@@ -21,13 +21,13 @@ void addSpeakerType(vector<vector<int>> &type) {
     }
     int isImpedance = askQuestion(1,2,"请选择音响灵敏度的单位( 1. dB/W/m  2. dB/2.83V/m ): ");
     if (isImpedance == 1) {
-        newType[1] = askQuestion(50,150, "请输入音响的灵敏度(范围: 50 ~ 150)(dB/W/m): ");
+        newType[1] = askQuestion(0,500, "请输入音响的灵敏度(dB/W/m): ");
         newType[2] = 0;
     } else {
-        newType[1] = askQuestion(0,2000, "请输入音响的灵敏度(范围: 0 ~ 200)(dB/2.83V/m): ");
-        newType[2] = askQuestion(1,1000, "请输入音响的阻抗(单位:Ω): ");
+        newType[1] = askQuestion(0,500, "请输入音响的灵敏度(dB/2.83V/m): ");
+        newType[2] = askQuestion(1,500, "请输入音响的阻抗(单位:Ω): ");
     }
-    newType[3] = askQuestion(0,1000, "请输入音响的RMS功率(单位:W): ");
+    newType[3] = askQuestion(0,5000, "请输入音响的RMS功率(单位:W): ");
     type.push_back(newType);
     cout << "音响类型添加成功!按任意键继续...\n";
     system("pause > nul");
@@ -72,7 +72,7 @@ void addSpeaker(Field &field, vector<Speaker> &speakers, vector<vector<int>> &ty
     newSpeaker.setSensitivity(type[newSpeaker.getType() - 1][1]);
     newSpeaker.setImpedance(type[newSpeaker.getType() - 1][2]);
     newSpeaker.setRmsPower(type[newSpeaker.getType() - 1][3]);
-    cout << "请输入音响摆放的位置(x,y) " << "(范围: 0 ~ " << field.getWidth() << " , 0 ~ " << field.getLength() << " )\n";
+    cout << "请输入音响摆放的位置(x,y) " << "(范围: 1 ~ " << field.getWidth() << " , 1 ~ " << field.getLength() << " )\n";
     newSpeaker.setX(askQuestion(0,field.getWidth(), "请输入x坐标: "));
     newSpeaker.setY(askQuestion(0,field.getLength(), "请输入y坐标: "));
     if(newSpeaker.getCoverageAngle()){
@@ -92,7 +92,7 @@ void adjustSpeaker(Field &field, vector<Speaker> &speakers, vector<vector<int>> 
     int index = 0;
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
     index = askQuestion(1, speakers.size(), "请输入要修改参数的音响序号: ");
-    cout << "请输入音响摆放的新位置(x,y) " << "(范围: 0 ~ " << field.getWidth() << " , 0 ~ " << field.getLength() << " )\n";
+    cout << "请输入音响摆放的新位置(x,y) " << "(范围: 1 ~ " << field.getWidth() << " , 1 ~ " << field.getLength() << " )\n";
     speakers[index - 1].setX(askQuestion(0,field.getWidth(), "请输入x坐标: "));
     speakers[index - 1].setY(askQuestion(0,field.getLength(), "请输入y坐标: "));
     speakers[index - 1].setMainAxisOrientation(askQuestion(0, 360, "请输入音响的主轴朝向(范围: 0 ~ 360): "));

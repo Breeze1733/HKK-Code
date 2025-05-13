@@ -23,23 +23,6 @@ void setConsoleFontSquare(int fontWidth = 16, int fontHeight = 16) {
     SetCurrentConsoleFontEx(hOut, FALSE, &cfi);
 }
 
-// 根据分贝设置颜色
-void setColorByDecibel(double dB, bool isSpeaker, const DecibelThreshold& thres) {
-    if (isSpeaker) {
-        setConsoleColor(13); // 浅紫
-        return;
-    }
-    if (dB >= thres.over) {
-        setConsoleColor(12); // 浅红
-    } else if (dB >= thres.good) {
-        setConsoleColor(14); // 浅黄
-    } else if (dB >= thres.low) {
-        setConsoleColor(8);  // 灰
-    } else {
-        setConsoleColor(7);  // 白
-    }
-}
-
 // 显示声压分布图
 void showMap(const MapCalculator& model, const DecibelThreshold& thres, double freqHz, const std::string& freqLabel) {
     int width = model.getWidth();
@@ -55,10 +38,15 @@ void showMap(const MapCalculator& model, const DecibelThreshold& thres, double f
         for (int j = 0; j < width; ++j) {
             bool isSpeaker = model.isSpeakerAt(j, i);
             double dB = model.getDecibelAt(j, i, freqHz);
-            int color = isSpeaker ? 13
-                        : (dB >= thres.over ? 12
-                        : (dB >= thres.good ? 14
-                        : (dB >= thres.low ? 8 : 7)));
+
+            // 计算当前颜色
+            int color = 7;
+            if (isSpeaker) color = 12;
+            else if (dB >= thres.over) color = 5;
+            else if (dB >= thres.good) color = 9;
+            else if (dB >= thres.low) color = 14;
+            else color = 7;
+
             if (color != lastColor && !buffer.empty()) {
                 setConsoleColor(lastColor);
                 std::cout << buffer;
@@ -105,7 +93,7 @@ int main() {
     _getch();
     system("cls");
 
-    DecibelThreshold thres(100.0, 93.0, 85.0);
+    DecibelThreshold thres;
 
     MapCalculator model;
     if (!model.loadData("output/data.txt")) {

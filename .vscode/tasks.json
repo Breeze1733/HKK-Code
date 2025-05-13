@@ -15,7 +15,7 @@
                 "Front_End/MenuFunction.cpp",
                 "Front_End/SystemEntrance.cpp",
                 "-o",
-                "Output/SystemEntrance.exe"
+                "Output/音响分贝模拟系统.exe"
             ],
             "group": {
                 "kind": "build",

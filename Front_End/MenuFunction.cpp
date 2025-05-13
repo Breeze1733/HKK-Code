@@ -3,10 +3,11 @@
 // 功能1 设置场地大小
 void setFieldSize(Field &field, vector<Speaker> &speakers, vector<vector<int>> &type) {
     clearAboveLines(9);
-    cout << "您正在设置场地大小...\n";
+    cout << "您正在设置场地大小，这会清空已经摆放好的音响...\n";
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
     field.setWidth(askQuestion(1,10000, "请输入场地左右宽度(米): "));
     field.setLength(askQuestion(1,10000, "请输入场地上下宽度(米): "));
+    speakers.clear();
     storeDataToFile("output/data.txt", field, speakers, type);
     cout << "场地大小设置成功!按任意键继续...";
     system("pause > nul");
@@ -102,7 +103,9 @@ void adjustSpeaker(Field &field, vector<Speaker> &speakers, vector<vector<int>> 
     cout << "请输入音响摆放的新位置(x,y) " << "(范围: 1 ~ " << field.getWidth() << " , 1 ~ " << field.getLength() << " )\n";
     speakers[index - 1].setX(askQuestion(0,field.getWidth(), "请输入x坐标: "));
     speakers[index - 1].setY(askQuestion(0,field.getLength(), "请输入y坐标: "));
-    speakers[index - 1].setMainAxisOrientation(askQuestion(0, 360, "请输入音响的主轴朝向(范围: 0 ~ 360): "));
+    if(speakers[index - 1].getCoverageAngle()){
+        speakers[index - 1].setMainAxisOrientation(askQuestion(0, 360, "请输入音响的主轴朝向(范围: 0 ~ 360°): "));
+    }
     storeDataToFile("output/data.txt", field, speakers, type);
     cout << "第" << index << "号音响参数调整成功!按任意键继续...";
     system("pause > nul");
@@ -125,6 +128,16 @@ void deleteSpeaker(Field &field, vector<Speaker> &speakers, vector<vector<int>> 
 // 功能7 打开分贝分布图
 void openMap(Field &field, vector<Speaker> &speakers){
     clearAboveLines(9);
+    if (speakers.empty()) {
+        cout << "当前没有音响，请先添加音响！按任意键继续...";
+        system("pause > nul");
+        return;
+    }
+    if (field.getWidth() == 0 || field.getLength() == 0) {
+        cout << "请先设置场地大小！按任意键继续...";
+        system("pause > nul");
+        return;
+    }
     static bool isMapConsoleOpen = false;
     if (!isMapConsoleOpen) {
         isMapConsoleOpen = true;

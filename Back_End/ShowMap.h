@@ -1,3 +1,35 @@
+#ifndef MAP_CALCULATOR_H
+#define MAP_CALCULATOR_H
+
+#include "../Public_Class/Field.h"
+#include "../Public_Class/Speaker.h"
+#include "DecibelThreshold.h"
+#include <vector>
+#include <string>
+#include <iostream>
+#include <fstream>
+#include <cmath>
+#include <algorithm>
+
+/**
+ * @brief 声压分布计算核心类
+ */
+class MapCalculator {
+private:
+    Field field;
+    std::vector<Speaker> speakers;
+public:
+    MapCalculator();
+    bool loadData(const std::string& path);
+    double getDecibelAt(int x, int y) const;
+    double getDecibelAt(int x, int y, double freqHz) const;
+    bool isSpeakerAt(int x, int y) const;
+    int getWidth() const { return field.getWidth(); }
+    int getLength() const { return field.getLength(); }
+};
+
+#endif // MAP_CALCULATOR_H
+
 #include "../Public_Class/Field.h"
 #include "../Public_Class/Speaker.h"
 #include "MapCalculator.h"
@@ -12,16 +44,6 @@ using std::cin;
 using std::string;
 using std::vector;
 
-/**
- * @brief 分贝阈值结构体，封装分贝区间
- */
-struct DecibelThreshold {
-    double over;
-    double good;
-    double low;
-    DecibelThreshold(double o = 100.0, double g = 80.0, double l = 65.0)
-        : over(o), good(g), low(l) {}
-};
 
 void setConsoleColor(int);
 void setConsoleFontSquare(int, int);

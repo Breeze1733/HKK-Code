@@ -2,16 +2,18 @@
 
 // 功能1 设置场地大小
 void setFieldSize(Field &field, vector<Speaker> &speakers, vector<vector<int>> &type) {
+    clearAboveLines(9);
     cout << "您正在设置场地大小...\n";
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
     field.setWidth(askQuestion(1,10000, "请输入场地左右宽度(米): "));
     field.setLength(askQuestion(1,10000, "请输入场地上下宽度(米): "));
     storeDataToFile("output/data.txt", field, speakers, type);
-    cout << "场地大小设置成功!按任意键继续...\n";
+    cout << "场地大小设置成功!按任意键继续...";
     system("pause > nul");
 }
 // 功能2 添加新的音响类型
 void addSpeakerType(vector<vector<int>> &type) {
+    clearAboveLines(9);
     vector<int> newType(4,0);
     cout << "您正在添加新的音响类型...\n";
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -29,13 +31,15 @@ void addSpeakerType(vector<vector<int>> &type) {
     }
     newType[3] = askQuestion(0,5000, "请输入音响的RMS功率(单位:W): ");
     type.push_back(newType);
-    cout << "音响类型添加成功!按任意键继续...\n";
+    cout << "音响类型添加成功!按任意键继续...";
     system("pause > nul");
 }
 // 功能3 删除指定音响类型
 void deleteSpeakerType(Field &field, vector<Speaker> &speakers, vector<vector<int>> &type) {
+    clearAboveLines(9);
     if(type.empty()) {
-        cout << "当前没有音响类型，无法删除。\n";
+        cout << "当前没有音响类型，无法删除。按任意键继续...";
+        system("pause > nul");
         return;
     }
     int index;
@@ -51,23 +55,25 @@ void deleteSpeakerType(Field &field, vector<Speaker> &speakers, vector<vector<in
         }
     }
     storeDataToFile("output/data.txt", field, speakers, type);
-    cout << "音响类型" << index << "删除成功!按任意键继续...\n";
+    cout << "音响类型" << index << "删除成功!按任意键继续...";
     system("pause > nul");
 }
 // 功能4 摆放音响
 void addSpeaker(Field &field, vector<Speaker> &speakers, vector<vector<int>> &type) {
+    clearAboveLines(9);
     if (type.empty()) {
-        cout << "当前没有音响类型，无法添加音响。\n";
+        cout << "当前没有音响类型，无法添加音响。按任意键继续...";
+        system("pause > nul");
         return;
     }
     if (field.getWidth() == 0 || field.getLength() == 0) {
-        cout << "请先设置场地大小！\n";
+        cout << "请先设置场地大小！按任意键继续...";
+        system("pause > nul");
         return;
     }
     Speaker newSpeaker;
-    cout << "您正在摆放音响，这是第" << speakers.size() + 1 << "号音箱...\n";
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    newSpeaker.setType(askQuestion(1, type.size(), "请选择音响类型: "));
+    newSpeaker.setType(askQuestion(1, type.size(), "您正在摆放新的音响, 请选择音响类型: "));
     newSpeaker.setCoverageAngle(type[newSpeaker.getType() - 1][0]);
     newSpeaker.setSensitivity(type[newSpeaker.getType() - 1][1]);
     newSpeaker.setImpedance(type[newSpeaker.getType() - 1][2]);
@@ -80,13 +86,14 @@ void addSpeaker(Field &field, vector<Speaker> &speakers, vector<vector<int>> &ty
     }
     speakers.push_back(newSpeaker);
     storeDataToFile("output/data.txt", field, speakers, type);
-    cout << "音响摆放成功!按任意键继续...\n";
+    cout << "音响摆放成功!按任意键继续...";
     system("pause > nul");
 }
 // 功能5 调整音箱位置与朝向
 void adjustSpeaker(Field &field, vector<Speaker> &speakers, vector<vector<int>> &type) {
+    clearAboveLines(9);
     if(speakers.empty()) {
-        cout << "当前没有音响，无法修改参数。\n";
+        cout << "当前没有音响，无法修改参数。按任意键继续...";
         return;
     }
     int index = 0;
@@ -97,13 +104,14 @@ void adjustSpeaker(Field &field, vector<Speaker> &speakers, vector<vector<int>> 
     speakers[index - 1].setY(askQuestion(0,field.getLength(), "请输入y坐标: "));
     speakers[index - 1].setMainAxisOrientation(askQuestion(0, 360, "请输入音响的主轴朝向(范围: 0 ~ 360): "));
     storeDataToFile("output/data.txt", field, speakers, type);
-    cout << "第" << index << "号音响参数调整成功!按任意键继续...\n";
+    cout << "第" << index << "号音响参数调整成功!按任意键继续...";
     system("pause > nul");
 }
 // 功能6 删除音响
 void deleteSpeaker(Field &field, vector<Speaker> &speakers, vector<vector<int>> &type) {
+    clearAboveLines(9);
     if(speakers.empty()) {
-        cout << "当前没有音响，无法删除。\n";
+        cout << "当前没有音响，无法删除。按任意键继续...";
         return;
     }
     int index;
@@ -111,11 +119,12 @@ void deleteSpeaker(Field &field, vector<Speaker> &speakers, vector<vector<int>> 
     index = askQuestion(1, speakers.size(), "请输入要删除的音响序号: ");
     speakers.erase(speakers.begin() + index - 1);
     storeDataToFile("output/data.txt", field, speakers, type);
-    cout << "第" << index << "号音响删除成功!按任意键继续...\n";
+    cout << "第" << index << "号音响删除成功!按任意键继续...";
     system("pause > nul");
 }
 // 功能7 打开分贝分布图
 void openMap(Field &field, vector<Speaker> &speakers){
+    clearAboveLines(9);
     static bool isMapConsoleOpen = false;
     if (!isMapConsoleOpen) {
         isMapConsoleOpen = true;
@@ -126,30 +135,33 @@ void openMap(Field &field, vector<Speaker> &speakers){
     cout << "使用说明：\n";
     cout << "输入“exit”后回车可以关闭分贝分布图。\n";
     cout << "输入任意其他内容回车可以更新分贝分布图。\n";
-    cout << "正在打开分贝分布图，按任意键继续...\n";
+    cout << "正在打开分贝分布图，按任意键继续...";
     system("pause > nul");
     system("start \"\" \"ShowMap.exe\"");
 }
 
 // 功能8 保存当前的方案
 void storeSolution(Field &field, vector<Speaker> &speakers, vector<vector<int>> &type) {
+    clearAboveLines(9);
     storeDataToFile("output/solution.txt", field, speakers, type);
-    cout << "您方案已保存在“output/solution.txt”中!按任意键继续...\n";
+    cout << "您方案已保存在“output/solution.txt”中!按任意键继续...";
     system("pause > nul");
 }
 
 // 功能9 读取保存的方案
 void readSolution(Field &field, vector<Speaker> &speakers, vector<vector<int>> &type) {
+    clearAboveLines(9);
     string inputPath = "output/solution.txt";
     getDataFromFile(inputPath, field, speakers, type);
     storeDataToFile("output/data.txt", field, speakers, type);
-    cout << "按任意键继续...\n";
+    cout << "按任意键继续...";
     system("pause > nul");
 }
 
 // 功能0
 void exitProgram() {
-    cout << "正在退出程序...\n";
+    clearAboveLines(9);
+    cout << "正在退出程序...";
     if (system("tasklist /FI \"IMAGENAME eq ShowMap.exe\" 2>NUL | find /I \"ShowMap.exe\" >NUL") == 0) {
         system("taskkill /IM ShowMap.exe /F > nul 2>&1");
     }  
@@ -160,6 +172,6 @@ void exitProgram() {
 // 选择错误
 void invalidChoice() {
     cout << "无效的选择，请重新选择。\n";
-    cout << "按任意键继续...\n";
+    cout << "按任意键继续...";
     system("pause > nul");
 }

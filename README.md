@@ -2,20 +2,19 @@
 
 ---
 
-## 1. 项目简介
+## 项目简介
 
 本项目为“音响声压分布模拟系统”，面向声学教学、扩声设计、音响工程等场景，提供可视化的声压分布仿真。用户可自定义场地、音响类型及参数，系统基于科学声学模型计算并以彩色字符图形直观展示不同频率下的声压分布。采用前后端分离设计，前端负责菜单与数据管理，后端负责声压分布计算与可视化。
 
 **主要功能亮点：**
-- 支持多种场景（如公园、舞台、礼堂、教室等）参数推荐与自定义
-- 支持音响灵敏度（dB/W/m 或 dB/2.83V/m）、功率、覆盖角、主轴朝向等参数调节
-- 多音响叠加，支持定向/全向模拟
-- 分贝分布图彩色显示，分贝区间和音响位置颜色直观
-- 支持方案保存/读取，便于多场景对比
+- 支持音响灵敏度（dB/W/m 或 dB/2.83V/m）、功率、覆盖角、主轴朝向等参数调节。
+- 多音响叠加，支持定向/全向模拟。
+- 分贝分布图彩色显示，分贝区间和音响位置颜色直观易懂。
+- 支持方案保存/读取，便于多场景对比。
 
 ---
 
-## 2. 目录结构说明
+## 目录结构
 
 ```
 HKK-Code/
@@ -25,7 +24,6 @@ HKK-Code/
 │   ├── MapCalculator.cpp     # 声压分布计算核心实现
 │   ├── MapCalculator.h       # 声压分布计算核心声明
 │   ├── DecibelThreshold.h    # 分贝阈值结构体
-│   └── ...
 ├── Front_End/
 │   ├── SystemEntrance.cpp    # 前端主菜单与交互
 │   ├── SystemEntrance.h      # 前端主菜单声明
@@ -35,15 +33,12 @@ HKK-Code/
 │   ├── ManageData.h          # 数据存储与读取声明
 │   ├── CheckInput.cpp        # 输入校验实现
 │   ├── CheckInput.h          # 输入校验声明
-│   └── ...
 ├── Public_Class/
 │   ├── Field.h               # 场地类
 │   ├── Speaker.h             # 音响类
-│   └── ...
 ├── Output/
-│   ├── ShowMap.exe           # 后端可执行文件
+│   ├── ShowMap.exe            # 后端可执行文件
 │   ├── 音响声压分布模拟系统.exe # 前端可执行文件
-│   └── ...
 ├── Principle.md              # 算法与声学原理说明
 ├── README.md                 # 项目说明（本文件）
 └── .vscode/
@@ -52,7 +47,7 @@ HKK-Code/
 
 ---
 
-## 3. 环境与依赖
+## 环境与依赖
 
 - **操作系统**：Windows 10/11
 - **编译器**：g++（建议 MinGW-w64，支持 C++17 标准）
@@ -65,9 +60,9 @@ HKK-Code/
 
 ---
 
-## 4. 编译与运行
+## 快速开始
 
-### 4.1 编译
+### 编译
 
 推荐使用 VSCode，直接按 `Ctrl+Shift+B` 选择对应任务自动编译。
 
@@ -79,7 +74,7 @@ g++ -std=c++17 -mconsole -I./Public_Class Front_End/CheckInput.cpp Front_End/Man
 g++ -std=c++17 -mconsole -I./Public_Class Back_End/ShowMap.cpp Back_End/MapCalculator.cpp -o Output/ShowMap.exe
 ```
 
-### 4.2 运行
+### 运行
 
 1. 运行前端主程序（菜单与数据管理）：
 
@@ -92,7 +87,7 @@ g++ -std=c++17 -mconsole -I./Public_Class Back_End/ShowMap.cpp Back_End/MapCalcu
 
 ---
 
-## 5. 使用说明
+## 使用说明
 
 - **场地设置**：支持自定义宽度和长度，单位为米。
 - **音响类型**：可自定义灵敏度（dB/W/m 或 dB/2.83V/m）、阻抗、RMS功率、-6dB覆盖角等参数。
@@ -102,16 +97,19 @@ g++ -std=c++17 -mconsole -I./Public_Class Back_End/ShowMap.cpp Back_End/MapCalcu
 
 ---
 
-## 6. 算法与原理
+## 算法与原理
 
-- **声压级计算**：采用标准电声学公式，支持灵敏度、功率、距离、方向性等参数影响，详见 [Principle.md](./Principle.md)。
+本系统核心算法与物理建模详见 [Principle.md](./Principle.md)。主要包括：
+
+- **声压级计算**：采用国际标准电声学公式，综合灵敏度、功率、距离、方向性等参数。
 - **方向性建模**：支持全指向、定向（覆盖角、主轴朝向），采用余弦幂模型等工程常用算法，频率越高定向性越强。
 - **多音响叠加**：采用能量叠加（分贝转功率再求和）方式，符合实际声场物理规律。
 - **频率影响**：高频段考虑空气吸收和定向性变化，低频段近似全指向。
+- **工程假设与边界条件**：详见 [Principle.md](./Principle.md)。
 
 ---
 
-## 7. 常见问题
+## 常见问题
 
 - **Q: 分布图乱码或无彩色？**  
   A: 请使用 Windows Terminal 或新版 CMD，确保终端支持 ANSI 彩色。
@@ -122,14 +120,23 @@ g++ -std=c++17 -mconsole -I./Public_Class Back_End/ShowMap.cpp Back_End/MapCalcu
 
 ---
 
-## 8. 参考与致谢
+## 参考与致谢
 
-- 主要声学公式与工程模型参考自 IEC/AES/ISO 等国际标准及主流声学教材。
-- 详细原理推导与工程背景见 [Principle.md](./Principle.md)。
+本项目主要声学公式与工程模型参考自 IEC/AES/ISO 等国际标准及主流声学教材，部分工程实现参考网络资料。详细原理推导与工程背景见 [Principle.md](./Principle.md)。
+
+[1] Davis, D., & Patronis, E. (2013). *Sound System Engineering* (4th ed.). Focal Press.  
+[2] JBL Professional. (2019). *Directivity Index and Q*. JBL Pro Knowledge Base.  
+[3] International Electrotechnical Commission. (2018). *IEC 60268-5: Sound system equipment - Part 5: Loudspeakers*.  
+[4] AES56-2007. (2008). *AES standard on acoustics - Sound source modeling*. Audio Engineering Society.  
+[5] ISO 9613-1. (1993). *Acoustics - Attenuation of sound during propagation outdoors - Part 1: Calculation of the absorption of sound by the atmosphere*.  
+[6] Anonymous. (2022). *Why use (cosθ+1)/2 for directivity?*. Signal Processing Stack Exchange.  
+[7] 知乎专栏. (2022). *音箱声压级与方向性原理*. 知乎.  
+[8] Aalto University. (2020). *Acoustics related thesis*.  
+[9] CSDN 博客. (2024). *声压级SPL计算与声场仿真原理*. https://blog.csdn.net/weixin_42929997/article/details/143598621
 
 ---
 
-## 9. 许可协议
+## 许可协议
 
 本项目仅供学习与教学用途，禁止用于商业用途。欢迎二次开发与改进，转载请注明出处。
 

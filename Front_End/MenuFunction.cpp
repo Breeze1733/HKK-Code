@@ -95,6 +95,7 @@ void adjustSpeaker(Field &field, vector<Speaker> &speakers, vector<vector<int>> 
     clearAboveLines(9);
     if(speakers.empty()) {
         cout << "当前没有音响，无法修改参数。按任意键继续...";
+        system("pause > nul");
         return;
     }
     int index = 0;
@@ -115,6 +116,7 @@ void deleteSpeaker(Field &field, vector<Speaker> &speakers, vector<vector<int>> 
     clearAboveLines(9);
     if(speakers.empty()) {
         cout << "当前没有音响，无法删除。按任意键继续...";
+        system("pause > nul");
         return;
     }
     int index;

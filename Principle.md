@@ -60,7 +60,8 @@ $$
 ## 完整公式整合
 将三项合并，得到总声压级：
 $$
-\text{SPL} = \underbrace{\text{灵敏度}}_{\text{基准值}} + \underbrace{10 \cdot \log_{10}(P)}_{\text{功率增益}} - \underbrace{20 \cdot \
+\text{SPL} = \underbrace{\text{灵敏度}}_{\text{基准值}} + \underbrace{10 \cdot \log_{10}(P)}_{\text{功率增益}} - \underbrace{20 \cdot \log_{10}(d)}_{\text{距离衰减}}
+$$
 
 # 音箱额定功率与平均工作功率的多场景耦合规律研究
 
@@ -196,8 +197,8 @@ $$ PUR = \frac{P_{avg}}{P_{rated}} \times 100\% $$
    - 功放功率输出能力 → 优先参考dB/W/m
 
 > **关键结论**：两种单位本质描述同一物理量，但换算关系取决于音箱阻抗。专业对比时必须明确标注测试条件（电压/功率 + 阻抗值）。
->
-> # 室外定向音箱声压衰减计算公式
+
+# 室外定向音箱声压衰减计算公式
 
 ## 基础声学公式
 
@@ -237,7 +238,6 @@ SPL(r,\theta) = SPL_0 - 20 \cdot \log_{10}\left(\frac{r}{r_0}\right) + DI(\theta
 \Delta SPL_{\text{air}} = \alpha \cdot r
 \]
 - \( \alpha \)：空气吸收系数（dB/m），与温湿度/频率相关
-- **参考值**：
   | 频率（Hz） | 20°C/50%湿度下的 \( \alpha \)（dB/100m） |
   |------------|----------------------------------------|
   | 1000       | 0.3                                    |
